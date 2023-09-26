@@ -1,0 +1,3 @@
+[submodule "Packages/arcore-unity-extensions"]
+	path = Packages/arcore-unity-extensions
+	url = https://github.com/ovi-lab/arcore-unity-extensions.git
