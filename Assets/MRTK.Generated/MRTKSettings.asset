@@ -20,3 +20,4 @@ MonoBehaviour:
       value: {fileID: 11400000, guid: c677e5c4eb85b7849a8da406775c299d, type: 2}
   buildPreferences:
     appLauncherModel: {fileID: 0}
+  <SpatializationMixer>k__BackingField: {fileID: 0}
