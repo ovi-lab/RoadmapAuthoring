@@ -118,25 +118,10 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: 7853329375739920221}
-  - {fileID: 4044547159937207225}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
   m_BypassEffects: 0
---- !u!244 &4044547159937207225
-AudioMixerEffectController:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_EffectID: 3ec7e74e0fde21349a24cbde420fd7a1
-  m_EffectName: Microsoft Spatializer Mixer
-  m_MixLevel: 47a62eaa0b371ca439d9c84b9e444ac5
-  m_Parameters: []
-  m_SendTarget: {fileID: 0}
-  m_EnableWetMix: 0
-  m_Bypass: 0
 --- !u!244 &7853329375739920221
 AudioMixerEffectController:
   m_ObjectHideFlags: 3

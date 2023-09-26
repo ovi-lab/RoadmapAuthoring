@@ -12,6 +12,8 @@ EditorBuildSettings:
     path: Assets/MRTKExamples/HandInteractionExamples.unity
     guid: 1300a9dceb058844b865199dcd557fc7
   m_configObjects:
+    UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 7e2fe7be3b0062444b588f8b2369b42d,
+      type: 2}
     com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: aa7f07a8612d95c4482cb7c08fbf9eda,
       type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 52cb1e19345cfe44386095c7b19a89cd,
