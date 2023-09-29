@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ubco.hcilab
+namespace ubc.ok.ovilab.roadmap
 {
     [System.Serializable]
     public class GroupData

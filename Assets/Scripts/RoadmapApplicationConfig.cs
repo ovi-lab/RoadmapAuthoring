@@ -9,7 +9,6 @@ namespace ubc.ok.ovilab.roadmap
     public class RoadmapApplicationConfig : ScriptableObject
     {
         [SerializeField] public string identifier = "Data";
-        [SerializeField] private BoxDisplayConfiguration boxDisplayConfiguration;
         /// <summary>
         /// PlaceableObject prefabs available to be instantiated. At least 1 is required.
         /// Defaults to index 0. Custom UI needed to change during runtime.
@@ -58,11 +57,15 @@ namespace ubc.ok.ovilab.roadmap
             }
 
             PlaceableObject obj = newObject.GetComponent<PlaceableObject>();
-            obj.Init(placeable.identifier);
+            // TODO PlaceableObject.Init
+            // obj.Init(placeable.identifier);
             return obj;
         }
 
         // From https://gamedev.stackexchange.com/questions/129116/how-to-create-a-box-collider-that-surrounds-an-object-and-its-children
+        /// <summary>
+        /// Creates a collider that encapsulates all the objects in `newObject`
+        /// </summary>
         private void AddBoundsToAllChildren(GameObject newObject)
         {
             Collider collider;
@@ -98,6 +101,7 @@ namespace ubc.ok.ovilab.roadmap
             }
         }
 
+        // TODO: SetupMRTKControls
         private void SetupMRTKControls(GameObject newObject)
         {
             // if (newObject.GetComponent<TapToPlace>() == null)
