@@ -6,13 +6,15 @@ namespace ubc.ok.ovilab.roadmap
     public class PlaceableObjectData
     {
         public string PrefabIdentifier;
-        public Pose LocalPose;
+        public Vector3 localPosition;
+        public Quaternion localRotation;
         public string AuxData;
 
-        public PlaceableObjectData(string prefabIdentifier, Pose localPose, string auxData = null)
+        public PlaceableObjectData(string prefabIdentifier, Vector3 localPosition, Quaternion localRotation, string auxData = null)
         {
             PrefabIdentifier = prefabIdentifier;
-            LocalPose = localPose;
+            this.localPosition = localPosition;
+            this.localRotation = localRotation;
             AuxData = auxData;
         }
     }

@@ -29,10 +29,7 @@ namespace ubc.ok.ovilab.roadmap
 
                 foreach(PlaceableObjectData objectData in data.PlaceableDataList)
                 {
-                    GameObject placeableGameObject = PlaceablesManager.Instance.applicationConfig.GetPleaceableGameObject(objectData.PrefabIdentifier, transform);
-                    PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(placeableGameObject, objectData.PrefabIdentifier);
-                    placeableObject.SetLocalPose(objectData.LocalPose);
-                    placeableObjects.Add(placeableObject);
+                    PlaceableObject placeableObject = AddPlaceableObject(objectData.PrefabIdentifier, objectData.localPosition, objectData.localRotation);
                 }
             }
             else
@@ -45,6 +42,21 @@ namespace ubc.ok.ovilab.roadmap
                 transform.position = Camera.main.transform.position;
                 transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, Vector3.up);
             }
+        }
+
+        public PlaceableObject AddPlaceableObject(string identifier)
+        {
+            Transform t = Camera.main.transform;
+            return AddPlaceableObject(identifier, transform.InverseTransformPoint(t.position + t.forward.normalized * 1.5f), Quaternion.identity);
+        }
+
+        public PlaceableObject AddPlaceableObject(string identifier, Vector3 position, Quaternion rotation)
+        {
+            GameObject placeableGameObject = PlaceablesManager.Instance.applicationConfig.GetPleaceableGameObject(identifier, transform);
+            PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(placeableGameObject, identifier);
+            placeableObject.SetLocalPose(position, rotation);
+            placeableObjects.Add(placeableObject);
+            return placeableObject;
         }
 
         public void RemovePlaceable(PlaceableObject placeableObject)

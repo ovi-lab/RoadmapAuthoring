@@ -33,9 +33,9 @@ namespace ubc.ok.ovilab.roadmap
             return GameObject.Instantiate(placeable.prefab, parent);
         }
 
-        internal IEnumerable<PlaceableContainer> PlacableIdentifierList()
+        public IEnumerable<string> PlacableIdentifierList()
         {
-            return placables;
+            return (placables.Select(p => p.identifier));
         }
     }
 

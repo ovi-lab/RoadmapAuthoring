@@ -35,7 +35,7 @@ namespace ubc.ok.ovilab.roadmap
 
         internal PlaceableObjectData GetPlaceableObjectData()
         {
-            return new PlaceableObjectData(prefabIdentifier, new Pose(transform.localPosition, transform.localRotation));
+            return new PlaceableObjectData(prefabIdentifier, transform.localPosition, transform.localRotation);
         }
 
         #region Factory methods
