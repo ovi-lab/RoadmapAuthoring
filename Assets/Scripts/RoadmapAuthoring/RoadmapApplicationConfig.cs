@@ -37,6 +37,16 @@ namespace ubc.ok.ovilab.roadmap
         {
             return (placables.Select(p => p.identifier));
         }
+
+        public string PlaceableIndexToName(int index)
+        {
+            return placables[index].identifier;
+        }
+
+        public int NumberOfPlaceables()
+        {
+            return placables.Count();
+        }
     }
 
     [System.Serializable]
