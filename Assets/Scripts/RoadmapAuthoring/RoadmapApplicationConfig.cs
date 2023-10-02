@@ -51,11 +51,21 @@ namespace ubc.ok.ovilab.roadmap
             boundsControlObj.transform.parent = parent;
             GameObject newObject = GameObject.Instantiate(placeable.prefab, boundsControlObj.transform);
 
-            if (newObject.GetComponent<Collider>() == null)
+            Collider collider = newObject.GetComponent<Collider>();
+
+            if (collider == null)
             {
-                AddBoundsToAllChildren(newObject);
+                collider = AddBoundsToAllChildren(newObject);
             }
             SetupMRTKBounds(boundsControlObj);
+
+            float handelsScaleFactor = collider.bounds.size.magnitude * 35;
+            foreach(BoundsHandleInteractable i in boundsControlObj.GetComponentsInChildren<BoundsHandleInteractable>())
+            {
+                // TODO: the BoundsHandleInteractable.LateUpdate would override this. Extend that class?
+                // i.transform.localScale *= handelsScaleFactor;
+            }
+
             return boundsControlObj;
         }
 
@@ -80,13 +90,13 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         // From https://gamedev.stackexchange.com/questions/129116/how-to-create-a-box-collider-that-surrounds-an-object-and-its-children
-        private void AddBoundsToAllChildren(GameObject newObject)
+        private Collider AddBoundsToAllChildren(GameObject newObject)
         {
             Collider collider;
             collider = newObject.GetComponent<Collider>();
             if (collider != null)
             {
-                return;
+                return collider;
             }
             else
             {
@@ -113,6 +123,8 @@ namespace ubc.ok.ovilab.roadmap
                 boxCol.center = bounds.center - newObject.transform.position;
                 boxCol.size = bounds.size;
             }
+
+            return collider;
         }
 
         public IEnumerable<string> PlacableIdentifierList()
