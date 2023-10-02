@@ -15,32 +15,22 @@ MonoBehaviour:
   identifier: TestApplicationData
   placables:
   - identifier: cofeecup74
-    prefab: {fileID: 1214529608091490941, guid: 0d3b2fd2079cd514d8dbce654f929320,
-      type: 3}
+    prefab: {fileID: 100002, guid: 6ceef383a3dfd0a4e9c38b8d793170e4, type: 3}
   - identifier: cofeecup44
-    prefab: {fileID: 1214529608091490941, guid: 0d3b2fd2079cd514d8dbce654f929320,
-      type: 3}
+    prefab: {fileID: 100018, guid: f9a8072f5d9b92347a999f10f01b8012, type: 3}
   - identifier: cofeecup63
-    prefab: {fileID: 1214529608091490941, guid: 0d3b2fd2079cd514d8dbce654f929320,
-      type: 3}
+    prefab: {fileID: 100000, guid: 1b72c1e6302ca7542afd89257b6367aa, type: 3}
   - identifier: cofeecup96
-    prefab: {fileID: 1214529608091490941, guid: 0d3b2fd2079cd514d8dbce654f929320,
-      type: 3}
+    prefab: {fileID: 100000, guid: dd0cc440d56588046a9c0df7183f8de5, type: 3}
   - identifier: cofeecup85
-    prefab: {fileID: 1214529608091490941, guid: 0d3b2fd2079cd514d8dbce654f929320,
-      type: 3}
+    prefab: {fileID: 919132149155446097, guid: 5d39d2acd68146e46b50daf59568729c, type: 3}
   - identifier: cofeecup78
-    prefab: {fileID: 1214529608091490941, guid: 0d3b2fd2079cd514d8dbce654f929320,
-      type: 3}
+    prefab: {fileID: 919132149155446097, guid: 1150f88d635809a4daf426ce19c38186, type: 3}
   - identifier: cofeecup778
-    prefab: {fileID: 1214529608091490941, guid: 0d3b2fd2079cd514d8dbce654f929320,
-      type: 3}
+    prefab: {fileID: 100002, guid: 6ceef383a3dfd0a4e9c38b8d793170e4, type: 3}
   - identifier: cofeecup78
-    prefab: {fileID: 1214529608091490941, guid: 0d3b2fd2079cd514d8dbce654f929320,
-      type: 3}
+    prefab: {fileID: 100000, guid: 1b72c1e6302ca7542afd89257b6367aa, type: 3}
   - identifier: 'cofeecup45 '
-    prefab: {fileID: 1214529608091490941, guid: 0d3b2fd2079cd514d8dbce654f929320,
-      type: 3}
+    prefab: {fileID: 100048, guid: 60260aaff9ed8764d9aad59253d848f7, type: 3}
   - identifier: 'cofeecup 55 '
-    prefab: {fileID: 1214529608091490941, guid: 0d3b2fd2079cd514d8dbce654f929320,
-      type: 3}
+    prefab: {fileID: 100002, guid: f967b4d6f21546b46a9254c5689467e2, type: 3}

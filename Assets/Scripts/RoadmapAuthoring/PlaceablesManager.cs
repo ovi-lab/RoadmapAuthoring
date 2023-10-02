@@ -86,6 +86,8 @@ namespace ubc.ok.ovilab.roadmap
         public void ClearData()
         {
             DestroyAll();
+            groups.Clear();
+            SetupGroup(null);
             PlayerPrefs.DeleteAll();
             PlayerPrefs.SetString("BuildKey", _buildKey);
             PlayerPrefs.Save();
