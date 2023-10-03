@@ -23,9 +23,17 @@ namespace ubc.ok.ovilab.roadmap
         private string _storageKey = "RoadMapStorage";
         private List<PlaceablesGroup> groups = new List<PlaceablesGroup>();
         private PlaceablesGroup currentGroup;
+        private bool modifyable = false;
+
+        public bool Modifyable
+        {
+            get => modifyable;
+            set => SetPlaceablesModifiable(value);
+        }
 
         private void Start()
         {
+            modifyable = false;
             if (!(PlayerPrefs.HasKey("BuildKey") && PlayerPrefs.GetString("BuildKey") == _buildKey))
             {
                 ClearData();
@@ -49,6 +57,15 @@ namespace ubc.ok.ovilab.roadmap
         private void OnApplicationQuit()
         {
             SaveImmediate();
+        }
+
+        public void SetPlaceablesModifiable(bool modifyable)
+        {
+            this.modifyable = modifyable;
+            foreach(PlaceablesGroup g in groups)
+            {
+                g.SetPlaceablesModifiable(modifyable);
+            }
         }
 
         #region load & save

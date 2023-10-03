@@ -54,6 +54,7 @@ namespace ubc.ok.ovilab.roadmap
         {
             PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(identifier, transform);
             placeableObject.SetLocalPose(position, rotation);
+            placeableObject.SetObjectManipulationEnabled(PlaceablesManager.Instance.Modifyable);
             placeableObjects.Add(placeableObject);
             return placeableObject;
         }
@@ -62,6 +63,14 @@ namespace ubc.ok.ovilab.roadmap
         {
             placeableObjects.Remove(placeableObject);
             Destroy(placeableObject.gameObject);
+        }
+
+        public void SetPlaceablesModifiable(bool modifyable)
+        {
+            foreach(PlaceableObject p in placeableObjects)
+            {
+                p.SetObjectManipulationEnabled(modifyable);
+            }
         }
 
         public GroupData GetGroupData()

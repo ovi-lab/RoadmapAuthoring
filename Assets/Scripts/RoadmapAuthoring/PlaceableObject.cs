@@ -38,6 +38,23 @@ namespace ubc.ok.ovilab.roadmap
             return new PlaceableObjectData(prefabIdentifier, transform.localPosition, transform.localRotation);
         }
 
+        /// <summary>
+        /// Enable/disable manipulation related functions of a placeable object.
+        /// </summary>
+        public void SetObjectManipulationEnabled(bool enabled)
+        {
+            GetComponent<BoundsControl>().enabled = enabled;
+            GetComponent<ObjectManipulator>().enabled = enabled;
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                Transform t = transform.GetChild(i);
+                if (t.name.Contains(RoadmapApplicationConfig.boundingBoxWithHandlesName))
+                {
+                    t.gameObject.SetActive(enabled);
+                }
+            }
+        }
+
         #region Factory methods
         public static HandleType handleTypeToUse = HandleType.Rotation | HandleType.Scale | HandleType.Translation;
 

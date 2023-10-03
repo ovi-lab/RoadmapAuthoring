@@ -51,6 +51,11 @@ namespace ubc.ok.ovilab.roadmap
                 t.ClearData();
             }
 
+            if (GUILayout.Button("Toggle modifyable"))
+            {
+                t.Modifyable = !t.Modifyable;
+            }
+
             GUI.enabled = Application.isPlaying;
         }
 
