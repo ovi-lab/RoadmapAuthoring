@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace ubc.ok.ovilab.roadmap
 {
@@ -25,10 +28,12 @@ namespace ubc.ok.ovilab.roadmap
         // Editor-only magic function
         private void OnValidate()
         {
+#if UNITY_EDITOR
             if (boundingBoxWithHandlesPrefab == null)
             {
                 boundingBoxWithHandlesPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(boundingBoxWithHandlesPath);
             }
+#endif
         }
 
         public GameObject GetPleaceableGameObject(string identifier, Transform parent = null)
