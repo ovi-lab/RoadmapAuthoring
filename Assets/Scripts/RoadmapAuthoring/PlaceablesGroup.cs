@@ -52,8 +52,7 @@ namespace ubc.ok.ovilab.roadmap
 
         public PlaceableObject AddPlaceableObject(string identifier, Vector3 position, Quaternion rotation)
         {
-            GameObject placeableGameObject = PlaceablesManager.Instance.applicationConfig.GetPleaceableGameObject(identifier, transform);
-            PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(placeableGameObject, identifier);
+            PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(identifier, transform);
             placeableObject.SetLocalPose(position, rotation);
             placeableObjects.Add(placeableObject);
             return placeableObject;

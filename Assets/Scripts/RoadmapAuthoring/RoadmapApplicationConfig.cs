@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using MixedReality.Toolkit.SpatialManipulation;
-using MixedReality.Toolkit.UX;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
 
 namespace ubc.ok.ovilab.roadmap
 {
@@ -13,7 +9,8 @@ namespace ubc.ok.ovilab.roadmap
     public class RoadmapApplicationConfig : ScriptableObject
     {
         private static string boundingBoxWithHandlesPath = "Packages/org.mixedrealitytoolkit.spatialmanipulation/BoundsControl/Prefabs/BoundingBoxWithHandles.prefab";
-        private static GameObject boundingBoxWithHandlesPrefab;
+        internal static string boundingBoxWithHandlesName = "BoundingBoxWithHandles";
+        internal static GameObject boundingBoxWithHandlesPrefab;
 
         [SerializeField] public string identifier = "Data";
         /// <summary>
@@ -51,80 +48,7 @@ namespace ubc.ok.ovilab.roadmap
             boundsControlObj.transform.parent = parent;
             GameObject newObject = GameObject.Instantiate(placeable.prefab, boundsControlObj.transform);
 
-            Collider collider = newObject.GetComponent<Collider>();
-
-            if (collider == null)
-            {
-                collider = AddBoundsToAllChildren(newObject);
-            }
-            SetupMRTKBounds(boundsControlObj);
-
-            float handelsScaleFactor = collider.bounds.size.magnitude * 35;
-            foreach(BoundsHandleInteractable i in boundsControlObj.GetComponentsInChildren<BoundsHandleInteractable>())
-            {
-                // TODO: the BoundsHandleInteractable.LateUpdate would override this. Extend that class?
-                // i.transform.localScale *= handelsScaleFactor;
-            }
-
             return boundsControlObj;
-        }
-
-
-        private void SetupMRTKBounds(GameObject boundsControlObj)
-        {
-            boundsControlObj.AddComponent<ConstraintManager>().AutoConstraintSelection = true;
-            MinMaxScaleConstraint minMaxScaleConstraint = boundsControlObj.AddComponent<MinMaxScaleConstraint>();
-            minMaxScaleConstraint.ProximityType = ManipulationProximityFlags.Near | ManipulationProximityFlags.Far;
-            minMaxScaleConstraint.HandType = ManipulationHandFlags.OneHanded | ManipulationHandFlags.TwoHanded;
-            minMaxScaleConstraint.RelativeToInitialState = true;
-
-            boundsControlObj.AddComponent<UGUIInputAdapterDraggable>();
-
-            ObjectManipulator objectManipulator = boundsControlObj.AddComponent<ObjectManipulator>();
-            objectManipulator.selectMode = InteractableSelectMode.Multiple;
-
-            BoundsControl boundsControl = boundsControlObj.AddComponent<BoundsControl>();
-            boundsControl.BoundsVisualsPrefab = boundingBoxWithHandlesPrefab;
-            boundsControl.BoundsCalculationMethod = BoundsCalculator.BoundsCalculationMethod.RendererOverCollider;
-            boundsControl.HandlesActive = true;
-        }
-
-        // From https://gamedev.stackexchange.com/questions/129116/how-to-create-a-box-collider-that-surrounds-an-object-and-its-children
-        private Collider AddBoundsToAllChildren(GameObject newObject)
-        {
-            Collider collider;
-            collider = newObject.GetComponent<Collider>();
-            if (collider != null)
-            {
-                return collider;
-            }
-            else
-            {
-                collider = newObject.AddComponent<BoxCollider>();   
-            }
-            BoxCollider boxCol = (BoxCollider)collider;
-            Bounds bounds = new Bounds(Vector3.zero, Vector3.zero);
-            Renderer thisRenderer = newObject.transform.GetComponent<Renderer>();
-            if (thisRenderer != null)
-            {
-                bounds.Encapsulate(thisRenderer.bounds);
-                boxCol.center = bounds.center - newObject.transform.position;
-                boxCol.size = bounds.size;
-            }
-
-            var allDescendants = newObject.GetComponentsInChildren<Transform>();
-            foreach (Transform desc in allDescendants)
-            {
-                Renderer childRenderer = desc.GetComponent<Renderer>();
-                if (childRenderer != null)
-                {
-                    bounds.Encapsulate(childRenderer.bounds);
-                }
-                boxCol.center = bounds.center - newObject.transform.position;
-                boxCol.size = bounds.size;
-            }
-
-            return collider;
         }
 
         public IEnumerable<string> PlacableIdentifierList()

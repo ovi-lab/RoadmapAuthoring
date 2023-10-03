@@ -1,8 +1,7 @@
-using System;
-using System.Collections.Generic;
-// using Microsoft.MixedReality.Toolkit.UI.BoundsControl;
-// using Microsoft.MixedReality.Toolkit.Utilities.Solvers;
+using MixedReality.Toolkit.SpatialManipulation;
+using MixedReality.Toolkit.UX;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
 
 namespace ubc.ok.ovilab.roadmap
 {
@@ -10,6 +9,7 @@ namespace ubc.ok.ovilab.roadmap
     /// An object that can be placed in the scene on an ARPlane by the PlaceablesManager.
     /// Will register with and be parented to a PlaceablesGroup.
     /// </summary>
+    [RequireComponent(typeof(BoundsControl))]
     public class PlaceableObject : MonoBehaviour
     {
         private string prefabIdentifier;
@@ -39,9 +39,12 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         #region Factory methods
-        public static PlaceableObject SetupPlaceableObject(GameObject placeableGameObject, string identifier)
+        public static HandleType handleTypeToUse = HandleType.Rotation | HandleType.Scale | HandleType.Translation;
+
+        public static PlaceableObject SetupPlaceableObject(string identifier, Transform parent)
         {
-            AddBoundsToAllChildren(placeableGameObject);
+            GameObject placeableGameObject = PlaceablesManager.Instance.applicationConfig.GetPleaceableGameObject(identifier, parent);
+            AddBoundsToAllChildren(placeableGameObject.transform.GetChild(0).gameObject);
 
             SetupMRTKControls(placeableGameObject);
 
@@ -96,25 +99,24 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         // TODO: SetupMRTKControls
-        private static void SetupMRTKControls(GameObject newObject)
+        private static void SetupMRTKControls(GameObject boundsControlObj)
         {
-            // if (newObject.GetComponent<TapToPlace>() == null)
-            // {
-            //     TapToPlace tapToPlace = newObject.AddComponent<TapToPlace>();
-            //     tapToPlace.DefaultPlacementDistance = 10;
-            //     tapToPlace.MaxRaycastDistance = 50;
-            //     tapToPlace.UseDefaultSurfaceNormalOffset = false;
+            boundsControlObj.AddComponent<ConstraintManager>().AutoConstraintSelection = true;
+            MinMaxScaleConstraint minMaxScaleConstraint = boundsControlObj.AddComponent<MinMaxScaleConstraint>();
+            minMaxScaleConstraint.ProximityType = ManipulationProximityFlags.Near | ManipulationProximityFlags.Far;
+            minMaxScaleConstraint.HandType = ManipulationHandFlags.OneHanded | ManipulationHandFlags.TwoHanded;
+            minMaxScaleConstraint.RelativeToInitialState = true;
 
-            //     SolverHandler solverHandler = newObject.GetComponent<SolverHandler>();
-            //     solverHandler.TrackedTargetType = Microsoft.MixedReality.Toolkit.Utilities.TrackedObjectType.Head;
-            // }
+            boundsControlObj.AddComponent<UGUIInputAdapterDraggable>();
 
-            // if (newObject.GetComponent<BoundsControl>() == null)
-            // {
-            //    BoundsControl boundsControl = newObject.AddComponent<BoundsControl>();
-            //    boundsControl.BoundsControlActivation = Microsoft.MixedReality.Toolkit.UI.BoundsControlTypes.BoundsControlActivationType.ActivateByPointer;
-            //    boundsControl.BoxDisplayConfig = boxDisplayConfiguration;
-            // }
+            ObjectManipulator objectManipulator = boundsControlObj.AddComponent<ObjectManipulator>();
+            objectManipulator.selectMode = InteractableSelectMode.Multiple;
+
+            BoundsControl boundsControl = boundsControlObj.AddComponent<BoundsControl>();
+            boundsControl.BoundsVisualsPrefab = RoadmapApplicationConfig.boundingBoxWithHandlesPrefab;
+            boundsControl.BoundsCalculationMethod = BoundsCalculator.BoundsCalculationMethod.RendererOverCollider;
+            boundsControl.HandlesActive = true;
+            boundsControl.EnabledHandles = handleTypeToUse;
         }
         #endregion
     }
