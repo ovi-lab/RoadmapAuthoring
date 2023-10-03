@@ -40,7 +40,11 @@ namespace ubc.ok.ovilab.roadmap
 
         public override void DismissPopup()
         {
-            activeDialog.Dismiss();
+            if (activeDialog != null)
+            {
+                activeDialog.Dismiss();
+                activeDialog = null;
+            }
         }
     }
 }

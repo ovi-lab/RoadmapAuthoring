@@ -23,6 +23,7 @@ namespace ubc.ok.ovilab.roadmap
         private List<PlaceablesGroup> groups = new List<PlaceablesGroup>();
         private PlaceablesGroup currentGroup;
         private bool modifyable = false;
+        private bool deleting = false;
         private PopupManager popupManager;
 
         public bool Modifyable
@@ -30,6 +31,8 @@ namespace ubc.ok.ovilab.roadmap
             get => modifyable;
             set => SetPlaceablesModifiable(value);
         }
+
+        public PlaceableObject ActivePlaceableObject { get; set; }
 
         private void Start()
         {
@@ -40,11 +43,6 @@ namespace ubc.ok.ovilab.roadmap
                 ClearData();
             }
             LoadAll();
-        }
-
-        public void SpawnObject(string identifier)
-        {
-            PlaceableObject placeableObject = currentGroup.AddPlaceableObject(identifier, "");
         }
 
         private void OnApplicationPause(bool pauseStatus)
@@ -58,15 +56,6 @@ namespace ubc.ok.ovilab.roadmap
         private void OnApplicationQuit()
         {
             SaveImmediate();
-        }
-
-        public void SetPlaceablesModifiable(bool modifyable)
-        {
-            this.modifyable = modifyable;
-            foreach(PlaceablesGroup g in groups)
-            {
-                g.SetPlaceablesModifiable(modifyable);
-            }
         }
 
         #region load & save
@@ -160,7 +149,7 @@ namespace ubc.ok.ovilab.roadmap
         {
             GameObject groupObject = new GameObject("Group");
             PlaceablesGroup placeablesGroup = groupObject.AddComponent<PlaceablesGroup>();
-            placeablesGroup.Init(groupData);
+            placeablesGroup.Init(groupData, OnPlaceableClicked);
             groups.Add(placeablesGroup);
 
             // TODO: group selection
@@ -171,6 +160,77 @@ namespace ubc.ok.ovilab.roadmap
         {
             return System.IO.Path.Combine(Application.persistentDataPath, $"{applicationConfig.buildKey}_{_storageKey}.json");
         }
+        #endregion
+
+        #region UI related functions
+        /// <summary>
+        /// Empty callback
+        /// </summary>
+        public void EmptyCallback() { }
+
+        /// <summary>
+        /// Callback for the add UI button when adding new objects from the List Menu.
+        /// </summary>
+        public void SpawnObject(string identifier)
+        {
+            PlaceableObject placeableObject = currentGroup.AddPlaceableObject(identifier, "", OnPlaceableClicked);
+        }
+
+        /// <summary>
+        /// Callback for the delete button.
+        /// </summary>
+        public void StartDelete()
+        {
+            deleting = true;
+            // NOTE: Passing empty action to cancel so that the button
+            // shows up.  Since the dissmissCallback is expected to be
+            // called always, resetting `deleting` there.
+            popupManager.OpenDialogWithMessage("Select object to delete", "", null, "Cancel", EmptyCallback, () => deleting = false);
+        }
+
+        /// <summary>
+        /// Delete the active placeable. Also stops the delete mode.
+        /// </summary>
+        public void DeleteActivePlaceable()
+        {
+            if (ActivePlaceableObject != null)
+            {
+                ActivePlaceableObject.DeleteThySelf();
+                ActivePlaceableObject = null;
+            }
+        }
+
+        /// <summary>
+        /// Callback for when the placeable object is clicked
+        /// </summary>
+        private void OnPlaceableClicked(PlaceableObject placeableObject)
+        {
+            ActivePlaceableObject = placeableObject;
+            if (deleting)
+            {
+                popupManager.DismissPopup();
+                popupManager.OpenDialogWithMessage("Deleting selected object. Are you sure?", "Yes", DeleteActivePlaceable, "No (Cancel delete)", EmptyCallback, null);
+                deleting = false;
+            }
+        }
+
+        /// <summary>
+        /// Make all placeable objects modifiable or not.
+        /// Also used as the callback function for the modify UI button.
+        /// </summary>
+        public void SetPlaceablesModifiable(bool modifyable)
+        {
+            this.modifyable = modifyable;
+            foreach(PlaceablesGroup g in groups)
+            {
+                g.SetPlaceablesModifiable(modifyable);
+            }
+
+            // NOTE: Any popup would have to gracefully get dismissed
+            popupManager.DismissPopup();
+            deleting = deleting && modifyable;
+        }
+
         #endregion
     }
 }
