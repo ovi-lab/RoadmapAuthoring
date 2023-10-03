@@ -29,7 +29,7 @@ namespace ubc.ok.ovilab.roadmap
 
         void Start()
         {
-            currentPlatform = DetectPlatform();
+            // currentPlatform = DetectPlatform();
             switch (currentPlatform)
             {
                 case Platform.ARCore:
@@ -49,11 +49,10 @@ namespace ubc.ok.ovilab.roadmap
             }
         }
 
-        // TODO: DetectPlatform
-        private Platform DetectPlatform()
-        {
-            return Platform.Oculus;
-        }
+        // private Platform DetectPlatform()
+        // {
+        //     return Platform.Oculus;
+        // }
 
         private void SetupARCore(bool isActive=true)
         {

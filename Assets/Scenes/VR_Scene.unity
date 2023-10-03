@@ -275,6 +275,7 @@ GameObject:
   - component: {fileID: 37920014}
   - component: {fileID: 37920013}
   - component: {fileID: 37920015}
+  - component: {fileID: 37920016}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -322,6 +323,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2187ff2842f47e54796e86d20c6353a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &37920016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 37920012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81964a35a12d3a84cbf702ec89dc327e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentPlatform: 0
+  oculusCamera: {fileID: 0}
+  arCoreCamera: {fileID: 0}
+  oculusMenu: {fileID: 0}
+  arCoreMenu: {fileID: 0}
+  platformSpecificManagerObject: {fileID: 0}
+  OculusDetected:
+    m_PersistentCalls:
+      m_Calls: []
+  ARCoreDetected:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &115937844
 GameObject:
   m_ObjectHideFlags: 0
