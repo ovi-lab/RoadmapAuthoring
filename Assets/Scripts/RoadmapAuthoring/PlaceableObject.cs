@@ -22,20 +22,21 @@ namespace ubc.ok.ovilab.roadmap
             this.prefabIdentifier = prefabIdentifier;
         }
 
-        public void SetLocalPose(Pose pose)
+        public void SetLocalPose(Pose pose, Vector3 scale)
         {
-            SetLocalPose(pose.position, pose.rotation);
+            SetLocalPose(pose.position, pose.rotation, scale);
         }
 
-        public void SetLocalPose(Vector3 position, Quaternion rotation)
+        public void SetLocalPose(Vector3 position, Quaternion rotation, Vector3 scale)
         {
             transform.localPosition = position;
             transform.localRotation = rotation;
+            transform.localScale = scale;
         }
 
         internal PlaceableObjectData GetPlaceableObjectData()
         {
-            return new PlaceableObjectData(prefabIdentifier, transform.localPosition, transform.localRotation);
+            return new PlaceableObjectData(prefabIdentifier, transform.localPosition, transform.localRotation, transform.localScale);
         }
 
         /// <summary>

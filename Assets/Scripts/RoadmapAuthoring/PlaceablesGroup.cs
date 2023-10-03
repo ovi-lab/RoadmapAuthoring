@@ -29,7 +29,7 @@ namespace ubc.ok.ovilab.roadmap
 
                 foreach(PlaceableObjectData objectData in data.PlaceableDataList)
                 {
-                    PlaceableObject placeableObject = AddPlaceableObject(objectData.PrefabIdentifier, objectData.localPosition, objectData.localRotation);
+                    PlaceableObject placeableObject = AddPlaceableObject(objectData.PrefabIdentifier, objectData.localPosition, objectData.localRotation, objectData.localScale);
                 }
             }
             else
@@ -47,13 +47,13 @@ namespace ubc.ok.ovilab.roadmap
         public PlaceableObject AddPlaceableObject(string identifier)
         {
             Transform t = Camera.main.transform;
-            return AddPlaceableObject(identifier, transform.InverseTransformPoint(t.position + t.forward.normalized * 1.5f), Quaternion.identity);
+            return AddPlaceableObject(identifier, transform.InverseTransformPoint(t.position + t.forward.normalized * 1.5f), Quaternion.identity, Vector3.one);
         }
 
-        public PlaceableObject AddPlaceableObject(string identifier, Vector3 position, Quaternion rotation)
+        public PlaceableObject AddPlaceableObject(string identifier, Vector3 position, Quaternion rotation, Vector3 scale)
         {
             PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(identifier, transform);
-            placeableObject.SetLocalPose(position, rotation);
+            placeableObject.SetLocalPose(position, rotation, scale);
             placeableObject.SetObjectManipulationEnabled(PlaceablesManager.Instance.Modifyable);
             placeableObjects.Add(placeableObject);
             return placeableObject;
