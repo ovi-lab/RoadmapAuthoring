@@ -14,6 +14,7 @@ namespace ubc.ok.ovilab.roadmap
     /// Singleton Class
     /// Manages PlaceablesGroups and world placement of PlaceableObjects, as well as saving and restoring session data.
     /// </summary>
+    [RequireComponent(typeof(PopupManager))]
     public class PlaceablesManager : Singleton<PlaceablesManager>
     {
         [SerializeField] public RoadmapApplicationConfig applicationConfig;
@@ -22,6 +23,7 @@ namespace ubc.ok.ovilab.roadmap
         private List<PlaceablesGroup> groups = new List<PlaceablesGroup>();
         private PlaceablesGroup currentGroup;
         private bool modifyable = false;
+        private PopupManager popupManager;
 
         public bool Modifyable
         {
@@ -31,6 +33,7 @@ namespace ubc.ok.ovilab.roadmap
 
         private void Start()
         {
+            popupManager = GetComponent<PopupManager>();
             modifyable = false;
             if (!(PlayerPrefs.HasKey("BuildKey") && PlayerPrefs.GetString("BuildKey") == applicationConfig.buildKey))
             {
