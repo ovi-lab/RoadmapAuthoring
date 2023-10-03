@@ -13,6 +13,9 @@ namespace ubc.ok.ovilab.roadmap
         internal static GameObject boundingBoxWithHandlesPrefab;
 
         [SerializeField] public string identifier = "Data";
+        [Tooltip("Changing this key will wipe all saved data first time a new build is run")]
+        [SerializeField] public string buildKey = "00001";
+        [SerializeField] public string groupID = "00001";
         /// <summary>
         /// PlaceableObject prefabs available to be instantiated. At least 1 is required.
         /// Defaults to index 0. Custom UI needed to change during runtime.

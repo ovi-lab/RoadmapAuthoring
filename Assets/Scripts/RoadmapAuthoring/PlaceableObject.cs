@@ -13,13 +13,22 @@ namespace ubc.ok.ovilab.roadmap
     public class PlaceableObject : MonoBehaviour
     {
         private string prefabIdentifier;
+        private string identifier;
+        // TODO: Properly update lastUpdate
+        private long lastUpdate;
 
         /// <summary>
         /// Initialze the PlaceableObject.
         /// </summary>
-        public void Init(string prefabIdentifier)
+        public void Init(string prefabIdentifier, string identifier, long lastUpdate)
         {
             this.prefabIdentifier = prefabIdentifier;
+            if (string.IsNullOrEmpty(identifier))
+            {
+                identifier = System.Guid.NewGuid().ToString();
+            }
+            this.identifier = $"{prefabIdentifier} {identifier}";
+            this.lastUpdate = lastUpdate;
         }
 
         public void SetLocalPose(Pose pose, Vector3 scale)
@@ -36,7 +45,8 @@ namespace ubc.ok.ovilab.roadmap
 
         internal PlaceableObjectData GetPlaceableObjectData()
         {
-            return new PlaceableObjectData(prefabIdentifier, transform.localPosition, transform.localRotation, transform.localScale);
+            // TODO: Use lastUpdate
+            return new PlaceableObjectData(prefabIdentifier, identifier, transform.localPosition, transform.localRotation, transform.localScale, System.DateTime.Now.Ticks);
         }
 
         /// <summary>
@@ -59,9 +69,9 @@ namespace ubc.ok.ovilab.roadmap
         #region Factory methods
         public static HandleType handleTypeToUse = HandleType.Rotation | HandleType.Scale | HandleType.Translation;
 
-        public static PlaceableObject SetupPlaceableObject(string identifier, Transform parent)
+        public static PlaceableObject SetupPlaceableObject(string prefabIdentifier, string identifier, Transform parent, long lastUpdate=-1)
         {
-            GameObject placeableGameObject = PlaceablesManager.Instance.applicationConfig.GetPleaceableGameObject(identifier, parent);
+            GameObject placeableGameObject = PlaceablesManager.Instance.applicationConfig.GetPleaceableGameObject(prefabIdentifier, parent);
             AddBoundsToAllChildren(placeableGameObject.transform.GetChild(0).gameObject);
 
             SetupMRTKControls(placeableGameObject);
@@ -72,7 +82,12 @@ namespace ubc.ok.ovilab.roadmap
                 placeableObject = placeableGameObject.AddComponent<PlaceableObject>();
             }
 
-            placeableObject.Init(identifier);
+            if (lastUpdate == -1)
+            {
+                lastUpdate = System.DateTime.Now.Ticks;
+            }
+
+            placeableObject.Init(prefabIdentifier, identifier, lastUpdate);
 
             return placeableObject;
         }

@@ -14,11 +14,13 @@ namespace ubc.ok.ovilab.roadmap
     public class PlaceablesGroup : MonoBehaviour
     {
         private List<PlaceableObject> placeableObjects;
+        private string identifier;
 
         // TODO platform specific details goes here?
         public void Init(GroupData data=null)
         {
             placeableObjects = new List<PlaceableObject>();
+            identifier = System.Guid.NewGuid().ToString();
 
             if (data != null)
             {
@@ -29,7 +31,7 @@ namespace ubc.ok.ovilab.roadmap
 
                 foreach(PlaceableObjectData objectData in data.PlaceableDataList)
                 {
-                    PlaceableObject placeableObject = AddPlaceableObject(objectData.PrefabIdentifier, objectData.localPosition, objectData.localRotation, objectData.localScale);
+                    PlaceableObject placeableObject = AddPlaceableObject(objectData.prefabIdentifier, objectData.identifier, objectData.localPosition, objectData.localRotation, objectData.localScale, objectData.lastUpdate);
                 }
             }
             else
@@ -44,15 +46,15 @@ namespace ubc.ok.ovilab.roadmap
             }
         }
 
-        public PlaceableObject AddPlaceableObject(string identifier)
+        public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier)
         {
             Transform t = Camera.main.transform;
-            return AddPlaceableObject(identifier, transform.InverseTransformPoint(t.position + t.forward.normalized * 1.5f), Quaternion.identity, Vector3.one);
+            return AddPlaceableObject(prefabIdentifier, identifier, transform.InverseTransformPoint(t.position + t.forward.normalized * 1.5f), Quaternion.identity, Vector3.one);
         }
 
-        public PlaceableObject AddPlaceableObject(string identifier, Vector3 position, Quaternion rotation, Vector3 scale)
+        public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, Vector3 position, Quaternion rotation, Vector3 scale, long lastUpdate=-1)
         {
-            PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(identifier, transform);
+            PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(prefabIdentifier, identifier, transform, lastUpdate);
             placeableObject.SetLocalPose(position, rotation, scale);
             placeableObject.SetObjectManipulationEnabled(PlaceablesManager.Instance.Modifyable);
             placeableObjects.Add(placeableObject);
@@ -84,7 +86,8 @@ namespace ubc.ok.ovilab.roadmap
                 data.Add(obj.GetPlaceableObjectData());
             }
 
-            return new GroupData(position.z,
+            return new GroupData(identifier,
+                                 position.z,
                                  position.x,
                                  position.y,
                                  headingAngle,

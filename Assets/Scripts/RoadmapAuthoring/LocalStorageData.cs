@@ -5,10 +5,12 @@ namespace ubc.ok.ovilab.roadmap
     [System.Serializable]
     public class LocalStorageData
     {
-        public List<GroupData> Groups;
-        public LocalStorageData(List<GroupData> groups)
+        public List<GroupData> groups;
+        public string lastWrittenPlatform;
+        public LocalStorageData(List<GroupData> groups, string lastWrittenPlatform)
         {
-            Groups = groups;
+            this.groups = groups;
+            this.lastWrittenPlatform = lastWrittenPlatform;
         }
     }
 }

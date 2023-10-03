@@ -18,8 +18,6 @@ namespace ubc.ok.ovilab.roadmap
     {
         [SerializeField] public RoadmapApplicationConfig applicationConfig;
         
-        [Tooltip("Changing this key will wipe all saved data first time a new build is run")]
-        [SerializeField] private string _buildKey = "00001";
         private string _storageKey = "RoadMapStorage";
         private List<PlaceablesGroup> groups = new List<PlaceablesGroup>();
         private PlaceablesGroup currentGroup;
@@ -34,7 +32,7 @@ namespace ubc.ok.ovilab.roadmap
         private void Start()
         {
             modifyable = false;
-            if (!(PlayerPrefs.HasKey("BuildKey") && PlayerPrefs.GetString("BuildKey") == _buildKey))
+            if (!(PlayerPrefs.HasKey("BuildKey") && PlayerPrefs.GetString("BuildKey") == applicationConfig.buildKey))
             {
                 ClearData();
             }
@@ -43,7 +41,7 @@ namespace ubc.ok.ovilab.roadmap
 
         public void SpawnObject(string identifier)
         {
-            PlaceableObject placeableObject = currentGroup.AddPlaceableObject(identifier);
+            PlaceableObject placeableObject = currentGroup.AddPlaceableObject(identifier, "");
         }
 
         private void OnApplicationPause(bool pauseStatus)
@@ -91,7 +89,7 @@ namespace ubc.ok.ovilab.roadmap
             //     return;
             // }
 
-            LocalStorageData storageData = new LocalStorageData(groups.Select(g => g.GetGroupData()).ToList());
+            LocalStorageData storageData = GetLocalStorageData();
             string jsonString = JsonUtility.ToJson(storageData);
             PlayerPrefs.SetString(_storageKey, jsonString);
 
@@ -100,13 +98,18 @@ namespace ubc.ok.ovilab.roadmap
             Debug.Log($"Saving data");
         }
 
+        public LocalStorageData GetLocalStorageData()
+        {
+            return new LocalStorageData(groups.Select(g => g.GetGroupData()).ToList(), PlatformManager.Instance.currentPlatform.ToString());
+        }
+
         public void ClearData()
         {
             DestroyAll();
             groups.Clear();
             SetupGroup(null);
             PlayerPrefs.DeleteAll();
-            PlayerPrefs.SetString("BuildKey", _buildKey);
+            PlayerPrefs.SetString("BuildKey", applicationConfig.buildKey);
             PlayerPrefs.Save();
             Debug.Log("Internal Storage Reset");
         }
@@ -129,7 +132,12 @@ namespace ubc.ok.ovilab.roadmap
 
             LocalStorageData storageData = JsonUtility.FromJson<LocalStorageData>(PlayerPrefs.GetString(_storageKey));
 
-            storageData.Groups.ForEach(groupData => SetupGroup(groupData));
+            LoadFromLocalStorageData(storageData);
+        }
+
+        public void LoadFromLocalStorageData(LocalStorageData storageData)
+        {
+            storageData.groups.ForEach(groupData => SetupGroup(groupData));
             if (currentGroup == null)
             {
                 SetupGroup(null);
@@ -158,7 +166,7 @@ namespace ubc.ok.ovilab.roadmap
 
         private string GetSaveFileLocation()
         {
-            return System.IO.Path.Combine(Application.persistentDataPath, $"{_buildKey}_{_storageKey}.json");
+            return System.IO.Path.Combine(Application.persistentDataPath, $"{applicationConfig.buildKey}_{_storageKey}.json");
         }
         #endregion
     }
