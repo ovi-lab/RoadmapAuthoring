@@ -13,12 +13,12 @@ namespace ubc.ok.ovilab.roadmap
     {
         private static string boundingBoxWithHandlesPath = "Packages/org.mixedrealitytoolkit.spatialmanipulation/BoundsControl/Prefabs/BoundingBoxWithHandles.prefab";
         internal static string boundingBoxWithHandlesName = "BoundingBoxWithHandles";
-        internal static GameObject boundingBoxWithHandlesPrefab;
 
         [SerializeField] public string identifier = "Data";
         [Tooltip("Changing this key will wipe all saved data first time a new build is run")]
         [SerializeField] public string buildKey = "00001";
         [SerializeField] public string groupID = "00001";
+        [SerializeField] public GameObject boundingBoxWithHandlesPrefab;
         /// <summary>
         /// PlaceableObject prefabs available to be instantiated. At least 1 is required.
         /// Defaults to index 0. Custom UI needed to change during runtime.
@@ -29,10 +29,12 @@ namespace ubc.ok.ovilab.roadmap
         private void OnValidate()
         {
 #if UNITY_EDITOR
+            Debug.Log($"{boundingBoxWithHandlesPrefab} --");
             if (boundingBoxWithHandlesPrefab == null)
             {
                 boundingBoxWithHandlesPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(boundingBoxWithHandlesPath);
             }
+            Debug.Log($"{boundingBoxWithHandlesPrefab} --2");
 #endif
         }
 

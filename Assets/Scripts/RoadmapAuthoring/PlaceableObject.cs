@@ -167,7 +167,7 @@ namespace ubc.ok.ovilab.roadmap
             objectManipulator.selectMode = InteractableSelectMode.Multiple;
 
             BoundsControl boundsControl = boundsControlObj.AddComponent<BoundsControl>();
-            boundsControl.BoundsVisualsPrefab = RoadmapApplicationConfig.boundingBoxWithHandlesPrefab;
+            boundsControl.BoundsVisualsPrefab = PlaceablesManager.Instance.applicationConfig.boundingBoxWithHandlesPrefab;
             boundsControl.BoundsCalculationMethod = BoundsCalculator.BoundsCalculationMethod.RendererOverCollider;
             boundsControl.HandlesActive = true;
             boundsControl.EnabledHandles = handleTypeToUse;
