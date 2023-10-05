@@ -5,12 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/VR_Scene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 0
     path: Assets/MRTKExamples/HandInteractionExamples.unity
     guid: 1300a9dceb058844b865199dcd557fc7
+  - enabled: 1
+    path: Assets/Scenes/AR_Scene.unity
+    guid: a73e640f681d1b642b529d4c8f9a6900
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 7e2fe7be3b0062444b588f8b2369b42d,
       type: 2}
