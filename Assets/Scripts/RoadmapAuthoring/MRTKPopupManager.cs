@@ -4,7 +4,7 @@ using UnityEngine;
 namespace ubc.ok.ovilab.roadmap
 {
     [RequireComponent(typeof(DialogPool))]
-    public class MRTKPopupMaanger :PopupManager
+    public class MRTKPopupManager :PopupManager
     {
         private DialogPool dialogPool;
         private IDialog activeDialog;
