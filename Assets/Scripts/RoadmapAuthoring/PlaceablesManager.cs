@@ -13,13 +13,14 @@ namespace ubc.ok.ovilab.roadmap
     /// <summary>
     /// Singleton Class
     /// Manages PlaceablesGroups and world placement of PlaceableObjects, as well as saving and restoring session data.
+    /// Expects a component that implements the `PopupManager` class.
     /// </summary>
     [RequireComponent(typeof(PopupManager))]
     public class PlaceablesManager : Singleton<PlaceablesManager>
     {
         [SerializeField] public RoadmapApplicationConfig applicationConfig;
         
-        private string _storageKey = "RoadMapStorage";
+        private const string _playerPrefsStorageKey = "RoadMapStorage";
         private List<PlaceablesGroup> groups = new List<PlaceablesGroup>();
         private PlaceablesGroup currentGroup;
         private bool modifyable = false;
@@ -34,6 +35,7 @@ namespace ubc.ok.ovilab.roadmap
 
         public PlaceableObject ActivePlaceableObject { get; set; }
 
+        #region Unity functions
         private void Start()
         {
             popupManager = GetComponent<PopupManager>();
@@ -57,10 +59,11 @@ namespace ubc.ok.ovilab.roadmap
         {
             SaveImmediate();
         }
+        #endregion
 
         #region load & save
         /// <summary>
-        /// Serialize and save all current session data to Player Prefs
+        /// Serialize and save all current session data to Player Prefs & also a copy to the application persistent path.
         /// </summary>
         private void SaveImmediate()
         {
@@ -83,18 +86,24 @@ namespace ubc.ok.ovilab.roadmap
 
             LocalStorageData storageData = GetLocalStorageData();
             string jsonString = JsonUtility.ToJson(storageData);
-            PlayerPrefs.SetString(_storageKey, jsonString);
+            PlayerPrefs.SetString(_playerPrefsStorageKey, jsonString);
 
             System.IO.File.WriteAllText(GetSaveFileLocation(), jsonString);
             PlayerPrefs.Save();
             Debug.Log($"Saving data");
         }
 
+        /// <summary>
+        /// Returns instance of LocalStorageData representing current state of applications.
+        /// </summary>
         public LocalStorageData GetLocalStorageData()
         {
             return new LocalStorageData(groups.Select(g => g.GetGroupData()).ToList(), PlatformManager.Instance.currentPlatform.ToString());
         }
 
+        /// <summary>
+        /// Clear state. Would also clear the PlayerPrefs associated with the applications.
+        /// </summary>
         public void ClearData()
         {
             DestroyAll();
@@ -106,27 +115,27 @@ namespace ubc.ok.ovilab.roadmap
             Debug.Log("Internal Storage Reset");
         }
 
-        private async void RestoreSavedData()
-        {
-            LoadAll();
-
-            await Task.Delay(1000);
-        }
-
+        // FIXME: Make this async?
+        /// <summary>
+        /// Load data from the PlayerPrefs and populate application state.
+        /// </summary>
         public void LoadAll()
         {
-            if (!PlayerPrefs.HasKey(_storageKey))
+            if (!PlayerPrefs.HasKey(_playerPrefsStorageKey))
             {
                 Debug.Log("Nothing to load");
                 SetupGroup(null);
                 return;
             }
 
-            LocalStorageData storageData = JsonUtility.FromJson<LocalStorageData>(PlayerPrefs.GetString(_storageKey));
+            LocalStorageData storageData = JsonUtility.FromJson<LocalStorageData>(PlayerPrefs.GetString(_playerPrefsStorageKey));
 
             LoadFromLocalStorageData(storageData);
         }
 
+        /// <summary>
+        /// Populate application state from a `LocalStorageData`
+        /// </summary>
         public void LoadFromLocalStorageData(LocalStorageData storageData)
         {
             storageData.groups.ForEach(groupData => SetupGroup(groupData));
@@ -136,7 +145,9 @@ namespace ubc.ok.ovilab.roadmap
             }
         }
 
-        // TODO DestroyAll
+        /// <summary>
+        /// Destroy all groups.
+        /// </summary>
         private void DestroyAll()
         {
             foreach(PlaceablesGroup group in groups)
@@ -145,6 +156,10 @@ namespace ubc.ok.ovilab.roadmap
             }
         }
 
+        /// <summary>
+        /// Setup new group. Would set this group as the current group.
+        /// The groupData passed to this also can be null (See PlaceablesGroup.Init for more information)
+        /// </summary>
         private void SetupGroup(GroupData groupData)
         {
             GameObject groupObject = new GameObject("Group");
@@ -156,15 +171,18 @@ namespace ubc.ok.ovilab.roadmap
             currentGroup = placeablesGroup;
         }
 
+        /// <summary>
+        /// Get location to save application state as a json file.
+        /// </summary>
         private string GetSaveFileLocation()
         {
-            return System.IO.Path.Combine(Application.persistentDataPath, $"{applicationConfig.buildKey}_{_storageKey}.json");
+            return System.IO.Path.Combine(Application.persistentDataPath, $"{applicationConfig.buildKey}_{_playerPrefsStorageKey}.json");
         }
         #endregion
 
         #region UI related functions
         /// <summary>
-        /// Empty callback
+        /// Empty callback function.
         /// </summary>
         public void EmptyCallback() { }
 

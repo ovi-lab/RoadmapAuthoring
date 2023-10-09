@@ -37,11 +37,17 @@ namespace ubc.ok.ovilab.roadmap
             GetComponent<ObjectManipulator>().OnClicked.AddListener(OnClickCallback);
         }
 
+        /// <summary>
+        /// Set the local position, rotation and scale.
+        /// </summary>
         public void SetLocalPose(Pose pose, Vector3 scale)
         {
             SetLocalPose(pose.position, pose.rotation, scale);
         }
 
+        /// <summary>
+        /// Set the local position, rotation and scale.
+        /// </summary>
         public void SetLocalPose(Vector3 position, Quaternion rotation, Vector3 scale)
         {
             transform.localPosition = position;
@@ -49,6 +55,9 @@ namespace ubc.ok.ovilab.roadmap
             transform.localScale = scale;
         }
 
+        /// <summary>
+        /// Get PlaceableObjectDta of this PlaceableObject.
+        /// </summary>
         internal PlaceableObjectData GetPlaceableObjectData()
         {
             // TODO: Use lastUpdate
@@ -72,11 +81,17 @@ namespace ubc.ok.ovilab.roadmap
             }
         }
 
+        /// <summary>
+        /// Wrapper for the onClickedCallback event.
+        /// </summary>
         public void OnClickCallback()
         {
             onClickedCallback?.Invoke(this);
         }
 
+        /// <summary>
+        /// Deinit and destroy self.
+        /// </summary>
         public void DeleteThySelf()
         {
             placeablesGroup.RemovePlaceable(this);
@@ -90,6 +105,14 @@ namespace ubc.ok.ovilab.roadmap
         #region Factory methods
         public static HandleType handleTypeToUse = HandleType.Rotation | HandleType.Scale | HandleType.Translation;
 
+        /// <summary>
+        /// Instantiate and configure a placeable object.
+        /// `identifier` and `lastUpdate` are used when populating application state from saved/streamed data.
+        /// <param name="prefabIdentifier">The identifier of the prefa/model to instantiate</param>
+        /// <param name="identifier">string to use to uniquely identify the placeable object. If null or empty string, in generate a unique identifier.</param>
+        /// <param name="placeablesGroup">The PlaceablesGroup the new placeable object would belong to.</param>
+        /// <param name="lastUpdate">The timestamp of when this object was last updated.</param>
+        /// </summary>
         public static PlaceableObject SetupPlaceableObject(string prefabIdentifier, string identifier, PlaceablesGroup placeablesGroup, long lastUpdate=-1)
         {
             GameObject placeableGameObject = PlaceablesManager.Instance.applicationConfig.GetPleaceableGameObject(prefabIdentifier, placeablesGroup.transform);
@@ -152,7 +175,9 @@ namespace ubc.ok.ovilab.roadmap
             }
         }
 
-        // TODO: SetupMRTKControls
+        /// <summary>
+        /// Setup MRTK related compoenents.
+        /// </summary>
         private static void SetupMRTKControls(GameObject boundsControlObj)
         {
             boundsControlObj.AddComponent<ConstraintManager>().AutoConstraintSelection = true;

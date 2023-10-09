@@ -17,6 +17,15 @@ namespace ubc.ok.ovilab.roadmap
         private string identifier;
 
         // TODO platform specific details goes here?
+        /// <summary>
+        /// Initialize this.
+        /// <param name="data">The GroupData to use to initilize this
+        /// group. If a new group, this can be null. Will initialize
+        /// the transform to the current camera transform.</param>
+        /// <param name="onClickedCallback">Callback when a
+        /// PlaceableObject is clicked. Used when `data` is not null
+        /// and populating placeable objects from the data.</param>
+        /// </summary>
         public void Init(GroupData data, System.Action<PlaceableObject> onClickedCallback)
         {
             placeableObjects = new List<PlaceableObject>();
@@ -47,12 +56,24 @@ namespace ubc.ok.ovilab.roadmap
             }
         }
 
+        /// <summary>
+        /// Initilize and add a PlaceableObject to this group.
+        /// </summary>
         public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, System.Action<PlaceableObject> onClickedCallback)
         {
             Transform t = Camera.main.transform;
             return AddPlaceableObject(prefabIdentifier, identifier, onClickedCallback, transform.InverseTransformPoint(t.position + t.forward.normalized * 1.5f), Quaternion.identity, Vector3.one);
         }
 
+        /// <summary>
+        /// Initilize and add a PlaceableObject to this group.
+        /// See `PlaceableObject.SetupPlacebleObject for details on
+        /// `prefabIdentifier`, `identifier` and `lastUpdate`.
+        /// See `PlaceableObject.SetLocalPose` for information on
+        /// `position` and `rotation`.
+        /// `onClickedCallback` is a function that subscribes to the
+        /// `PlaceableObject.onClickedCallback` event.
+        /// </summary>
         public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, System.Action<PlaceableObject> onClickedCallback, Vector3 position, Quaternion rotation, Vector3 scale, long lastUpdate=-1)
         {
             PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(prefabIdentifier, identifier, this, lastUpdate);
@@ -63,11 +84,17 @@ namespace ubc.ok.ovilab.roadmap
             return placeableObject;
         }
 
+        /// <summary>
+        /// Remove given placeableObject from this group.
+        /// </summary>
         public void RemovePlaceable(PlaceableObject placeableObject)
         {
             placeableObjects.Remove(placeableObject);
         }
 
+        /// <summary>
+        /// Set the modifiable for placeableObjects in this group.
+        /// </summary>
         public void SetPlaceablesModifiable(bool modifyable)
         {
             foreach(PlaceableObject p in placeableObjects)
@@ -76,6 +103,9 @@ namespace ubc.ok.ovilab.roadmap
             }
         }
 
+        /// <summary>
+        /// Get GroupData representing this group.
+        /// </summary>
         public GroupData GetGroupData()
         {
             Vector3 position = transform.position;
