@@ -270,12 +270,6 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         private void UpdateSessionState()
         {
-            /// Pressing 'back' button quits the app.
-            if (Input.GetKeyUp(KeyCode.Escape))
-            {
-                Application.Quit();
-            }
-
             /// Only allow the screen to sleep when not tracking.
             var sleepTimeout = SleepTimeout.NeverSleep;
             if (ARSession.state != ARSessionState.SessionTracking)
@@ -410,7 +404,7 @@ namespace ubc.ok.ovilab.roadmap
         /// <param name="pose"></param>
         public ARGeospatialAnchor RequestGeospatialAnchor(GeospatialPose pose)
         {
-            // Get forward from the EunRotation then project that on the xy plane. Use that to get rotation around y axis
+            // Get forward from the EunRotation then project that on the xz plane. Use that to get rotation around y axis
             Quaternion quaternion = Quaternion.LookRotation(Vector3.ProjectOnPlane(pose.EunRotation * Vector3.forward, Vector3.up), Vector3.up);
             return AnchorManager.AddAnchor(pose.Latitude, pose.Longitude, pose.Altitude, quaternion);
         }

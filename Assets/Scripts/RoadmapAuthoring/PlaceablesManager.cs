@@ -19,6 +19,7 @@ namespace ubc.ok.ovilab.roadmap
     public class PlaceablesManager : Singleton<PlaceablesManager>
     {
         [SerializeField] public RoadmapApplicationConfig applicationConfig;
+        [SerializeField] private GroupAnchorFactory groupAnchorFactory;
         
         private const string _playerPrefsStorageKey = "RoadMapStorage";
         private List<PlaceablesGroup> groups = new List<PlaceablesGroup>();
@@ -162,9 +163,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         private void SetupGroup(GroupData groupData)
         {
-            GameObject groupObject = new GameObject("Group");
-            PlaceablesGroup placeablesGroup = groupObject.AddComponent<PlaceablesGroup>();
-            placeablesGroup.Init(groupData, OnPlaceableClicked);
+            PlaceablesGroup placeablesGroup = groupAnchorFactory.GetPlaceablesGroup(groupData, OnPlaceableClicked);
             groups.Add(placeablesGroup);
 
             // TODO: group selection

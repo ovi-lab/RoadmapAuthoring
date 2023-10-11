@@ -16,7 +16,6 @@ namespace ubc.ok.ovilab.roadmap
         private List<PlaceableObject> placeableObjects;
         private string identifier;
 
-        // TODO platform specific details goes here?
         /// <summary>
         /// Initialize this.
         /// <param name="data">The GroupData to use to initilize this
@@ -33,25 +32,11 @@ namespace ubc.ok.ovilab.roadmap
 
             if (data != null)
             {
-                transform.position = new Vector3((float)data.Longitude, (float)data.Altitude, (float)data.Latitude);
-                // z is the north!
-                transform.rotation = Quaternion.AngleAxis((float)data.Heading, Vector3.up);
-
                 foreach(PlaceableObjectData objectData in data.PlaceableDataList)
                 {
                     PlaceableObject placeableObject = AddPlaceableObject(objectData.prefabIdentifier, objectData.identifier, onClickedCallback,
                                                                          objectData.localPosition, objectData.localRotation, objectData.localScale, objectData.lastUpdate);
                 }
-            }
-            else
-            {
-                /// -z is north, x is west
-                /// heading is the camera's forward vector projected on the xz plane (y is the plane normal vector)
-                // Heading not needed in the VR scene
-                // float heading = Vector3.Angle(-Vector3.forward,
-                //                               Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up));
-                transform.position = Camera.main.transform.position;
-                transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, Vector3.up);
             }
         }
 
