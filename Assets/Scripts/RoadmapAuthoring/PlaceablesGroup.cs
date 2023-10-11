@@ -34,9 +34,8 @@ namespace ubc.ok.ovilab.roadmap
             if (data != null)
             {
                 transform.position = new Vector3((float)data.Longitude, (float)data.Altitude, (float)data.Latitude);
-                // -z is the north!
-                transform.rotation = Quaternion.LookRotation(Vector3.back, Vector3.up);
-                transform.Rotate(Vector3.up, (float)data.Heading);
+                // z is the north!
+                transform.rotation = Quaternion.AngleAxis((float)data.Heading, Vector3.up);
 
                 foreach(PlaceableObjectData objectData in data.PlaceableDataList)
                 {
@@ -109,7 +108,8 @@ namespace ubc.ok.ovilab.roadmap
         public GroupData GetGroupData()
         {
             Vector3 position = transform.position;
-            float headingAngle = Vector3.Angle(-Vector3.forward,
+            // Rotation around -gravity (+y) from north (+z)
+            float headingAngle = Vector3.Angle(Vector3.forward,
                                                Vector3.ProjectOnPlane(transform.forward, Vector3.up));
             List<PlaceableObjectData> data = new List<PlaceableObjectData>();
             foreach(PlaceableObject obj in placeableObjects)
