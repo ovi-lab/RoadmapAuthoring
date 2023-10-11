@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ubc.ok.ovilab.roadmap
@@ -7,6 +8,9 @@ namespace ubc.ok.ovilab.roadmap
     /// </summary>
     public class GroupAnchorFactory : MonoBehaviour
     {
+        // Event to run when the factory is ready.
+        protected Queue<System.Action> actionsToRun = new Queue<System.Action>();
+
         /// <summary>
         /// Initializes a new instance of PlaceblesGroup and return it."
         /// </summary>
@@ -35,6 +39,32 @@ namespace ubc.ok.ovilab.roadmap
             PlaceablesGroup placeablesGroup = groupObject.AddComponent<PlaceablesGroup>();
             placeablesGroup.Init(groupData, onClickedCallback);
             return placeablesGroup;
+        }
+
+        /// <summary>
+        /// Queue an action to be executed when the factory is ready.
+        /// </summary>
+        public void AddActionToRunWhenReady(System.Action action)
+        {
+            actionsToRun.Enqueue(action);
+        }
+
+        /// <summary>
+        /// Execute all actions in the `actionsToRun` quque. When done, the queue will be empty.
+        /// </summary>
+        protected void RunAllActions()
+        {
+            while (actionsToRun.Count != 0)
+            {
+                System.Action action = actionsToRun.Dequeue();
+                action.Invoke();
+            }
+        }
+
+        // Unity method
+        protected virtual void Update()
+        {
+            RunAllActions();
         }
     }
 }

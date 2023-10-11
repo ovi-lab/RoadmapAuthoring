@@ -163,11 +163,15 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         private void SetupGroup(GroupData groupData)
         {
-            PlaceablesGroup placeablesGroup = groupAnchorFactory.GetPlaceablesGroup(groupData, OnPlaceableClicked);
-            groups.Add(placeablesGroup);
+            groupAnchorFactory.AddActionToRunWhenReady(() =>
+            {
+                PlaceablesGroup placeablesGroup = groupAnchorFactory.GetPlaceablesGroup(groupData, OnPlaceableClicked);
+                groups.Add(placeablesGroup);
 
-            // TODO: group selection
-            currentGroup = placeablesGroup;
+                // TODO: group selection
+                currentGroup = placeablesGroup;
+
+            });
         }
 
         /// <summary>
