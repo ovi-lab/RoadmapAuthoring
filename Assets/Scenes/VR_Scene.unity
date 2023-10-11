@@ -269,12 +269,6 @@ Camera:
     type: 3}
   m_PrefabInstance: {fileID: 23039506}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &23039514 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2351505566771328526, guid: 4d7e2f87fefe0ba468719b15288b46e7,
-    type: 3}
-  m_PrefabInstance: {fileID: 23039506}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &23433362
 GameObject:
   m_ObjectHideFlags: 0
@@ -350,6 +344,7 @@ GameObject:
   - component: {fileID: 37920016}
   - component: {fileID: 37920018}
   - component: {fileID: 37920017}
+  - component: {fileID: 37920019}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -370,7 +365,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   applicationConfig: {fileID: 11400000, guid: 531ed61140d66ba459597daa21b0a046, type: 2}
-  mainCameraTransform: {fileID: 23039514}
+  groupAnchorFactory: {fileID: 37920019}
 --- !u!4 &37920014
 Transform:
   m_ObjectHideFlags: 0
@@ -448,6 +443,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <DialogPrefab>k__BackingField: {fileID: 6930810733556124559, guid: cca6164bb2744884a92a100266f5f3aa,
     type: 3}
+--- !u!114 &37920019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 37920012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddca15f68aee0dd4fb9faa6931b8eb38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &115937844
 GameObject:
   m_ObjectHideFlags: 0

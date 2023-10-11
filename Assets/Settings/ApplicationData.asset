@@ -17,6 +17,7 @@ MonoBehaviour:
   groupID: 0001
   boundingBoxWithHandlesPrefab: {fileID: 5671351296789090341, guid: 7b542306e34a62f4c9a822fcb19b7d99,
     type: 3}
+  stateChanged: 1
   placables:
   - identifier: cofeecup74
     prefab: {fileID: 100002, guid: 6ceef383a3dfd0a4e9c38b8d793170e4, type: 3}

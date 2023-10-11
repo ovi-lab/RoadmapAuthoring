@@ -71,6 +71,12 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+# Android Resolved Dependencies 
+[Aa]ssets/Plugins/Android/
+ProjectSettings/AndroidResolverDependencies.xml
+Assets/Plugins/Android/proguard-user.txt
+
+
 .vscode/
 
 *.blend1
