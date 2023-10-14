@@ -1,0 +1,104 @@
+# -*- org-download-image-dir: "figures"; -*-
+#+PROPERTY: header-args:jupyter-python :kernel generic-jupyter-env-seaborn  :exports both
+
+#+begin_src jupyter-python :exports both  :results none
+  import numpy as np
+  import sys
+  from itertools import combinations
+  import math
+  np.set_printoptions(suppress=True)
+#+end_src
+
+- -gravity (+y), north (+z), west (+x)
+
+* Points picked
+- ~p1~- arts building forward corner
+- ~p2~ - admin building forward corner
+- ~p3~ - science building corner
+- ~p4~ - library south eastish
+
+- Physical distance from p1 to p3 = 67.84m
+  Along z = 67.09m
+  Along x = 9.79m
+- Physical distance from p1 to p4 = 112.46m
+  Along z (latitude) = 63.34
+  Along x (latitude) = 92.61
+
+#+DOWNLOADED: screenshot @ 2023-10-13 11:15:59
+[[file:figures/Points_picked/2023-10-13_11-15-59_screenshot.png]]
+
+* Transform points
+
+#+begin_src jupyter-python
+  p1= np.array((49.93923728205091, -119.39664782663341))
+  p2= np.array((49.93921880602778, -119.39617734560862))
+  p3= np.array((49.939840828252905, -119.39651226429999))
+  p4= np.array((49.93980592952962, -119.39534882049644))
+  p4_p1_x = 92.61
+  p3_p1_x = 9.79
+  p4_p1_y = 63.34
+  p3_p1_y = 67.09
+#+end_src
+
+#+RESULTS:
+
+
+#+begin_src jupyter-python
+  # from https://stackoverflow.com/questions/3024404/transform-longitude-latitude-into-meters
+  def asRadians(degrees):
+      return degrees * math.pi / 180
+
+  def getXYpos(deltaLongitude, deltaLatitude):
+      """ Calculates X and Y distances in meters.
+      """
+      latitudeCircumference = 40075160 * math.cos(asRadians(deltaLatitude))
+      resultX = deltaLongitude * latitudeCircumference / 360
+      resultY = deltaLatitude * 40008000 / 360
+      return np.array((resultX, resultY))
+#+end_src
+
+#+RESULTS:
+
+#+begin_src jupyter-python
+  print(np.linalg.norm(getXYpos(*p4) - getXYpos(*p1)))
+#+end_src
+
+#+RESULTS:
+: 164.44044997940298
+
+- The above results should be 112 something....
+
+- Falling back to using the distance values
+#+begin_src jupyter-python
+  p4_to_p1 = p4 - p1
+  factor1 = np.array((p4_p1_y / p4_to_p1[0], p4_p1_x / p4_to_p1[1]))
+  print(factor1, p4_to_p1)
+  p3_to_p1 = p3 - p1
+  factor2 = np.array((p3_p1_y / p3_to_p1[0], p3_p1_x / p3_to_p1[1]))
+  print(factor2, p3_to_p1)
+  factor = (factor1 + factor2) / 2
+  print(factor)
+  print(np.linalg.norm(p4_to_p1 * factor))
+  print(np.linalg.norm(p3_to_p1 * factor))
+#+end_src
+
+#+RESULTS:
+: [111387.11129763  71292.96572507] [0.00056865 0.00129901]
+: [111159.6755615   72217.70054087] [0.00060355 0.00013556]
+: [111273.39342956  71755.33313297]
+: 112.65872047056074
+: 67.85943472445116
+
+#+begin_src jupyter-python
+  center = p2 + p3 / 2
+  print("point p1",(p1 - center) * factor)
+  print("point p2",(p2 - center) * factor)
+  print("point p3",(p3 - center) * factor)
+  print("point p4",(p4 - center) * factor)
+#+end_src
+
+#+RESULTS:
+: point p1 [-2778485.72225615  4283634.49669712]
+: point p2 [-2778487.77814594  4283668.25621978]
+: point p3 [-2778418.56362216  4283644.22401751]
+: point p4 [-2778422.44692153  4283727.70731522]
