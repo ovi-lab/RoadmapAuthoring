@@ -418,17 +418,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentPlatform: 0
-  oculusCamera: {fileID: 0}
-  arCoreCamera: {fileID: 0}
-  oculusMenu: {fileID: 0}
-  arCoreMenu: {fileID: 0}
-  platformSpecificManagerObject: {fileID: 0}
-  OculusDetected:
-    m_PersistentCalls:
-      m_Calls: []
-  ARCoreDetected:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &37920017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2793,7 +2782,7 @@ GameObject:
   - component: {fileID: 1027371059}
   - component: {fileID: 1027371058}
   - component: {fileID: 1027371060}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}

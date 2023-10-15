@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace ubc.ok.ovilab.roadmap
 {
@@ -16,50 +15,69 @@ namespace ubc.ok.ovilab.roadmap
     {
         [SerializeField] public Platform currentPlatform;
 
-        [SerializeField] public Camera oculusCamera;
-        [SerializeField] public Camera arCoreCamera;
+        // See `docs/_calculating_translation.org` for how this is calculated
+        private float zLatOffset = -119.3963448f;
+        private float xLonOffset = 49.93952982f;
+        private float zLatFactor = 71755.33313297f;
+        private float xLonFactor = 111273.39342956f;
 
-        [SerializeField] private GameObject oculusMenu;
-        [SerializeField] private GameObject arCoreMenu;
-
-        [SerializeField] private GameObject platformSpecificManagerObject;
-
-        public UnityEvent OculusDetected;
-        public UnityEvent ARCoreDetected;
-
-        void Start()
+        /// <summary>
+        /// Convert group date between platforms.
+        /// If the `convertingFrom` platform is the same as the
+        /// current, it woul make not changes to the groupd data
+        /// passed.
+        /// </summary>
+        public void ConvertGroupData(GroupData data, Platform convertingFrom)
         {
-            // currentPlatform = DetectPlatform();
-            switch (currentPlatform)
+            if (currentPlatform == convertingFrom)
             {
-                case Platform.ARCore:
-                    SetupARCore();
-                    // Do any setup to deactivate other platforms
-                    SetupOculus(isActive: false);
-                    // Call events attached through the UI
-                    ARCoreDetected?.Invoke();
-                    break;
+                return;
+            }
+
+            switch(convertingFrom)
+            {
                 case Platform.Oculus:
-                    SetupOculus();
-                    // Do any setup to deactivate other platforms
-                    SetupARCore(isActive: false);
-                    // Call events attached through the UI
-                    OculusDetected?.Invoke();
+                    VrtoAr(data);
+                    break;
+                case Platform.ARCore:
+                    ArToVr(data);
                     break;
             }
         }
 
-        // private Platform DetectPlatform()
-        // {
-        //     return Platform.Oculus;
-        // }
-
-        private void SetupARCore(bool isActive=true)
+        /// <summary>
+        /// Convert group data from vr to ar
+        /// </summary>
+        protected GroupData VrtoAr(GroupData data)
         {
+            data.Latitude = data.Latitude / zLatFactor + zLatOffset;
+            data.Longitude = data.Longitude / xLonFactor + xLonOffset;
+            data.Altitude = 0; // Using the terrain coordinates, sets to zero on ground
+            return data;
         }
 
-        private void SetupOculus(bool isActive=true)
+        /// <summary>
+        /// Convert group data from ar to vr
+        /// </summary>
+        protected GroupData ArToVr(GroupData data)
         {
+            data.Latitude = (data.Latitude - zLatOffset)  * zLatFactor;
+            data.Longitude = (data.Longitude - xLonOffset) * xLonFactor;
+
+            Vector3 rayOrigin = new Vector3((float)data.Longitude, (float)data.Latitude, 20);
+
+            RaycastHit hit;
+            // Does the ray intersect terrain
+            if (Physics.Raycast(rayOrigin, Vector3.down, out hit, Mathf.Infinity, LayerMask.NameToLayer("Terrain")))
+            {
+                data.Altitude = hit.point.y;
+            }
+            else
+            {
+                throw new Exception("Tarrain missed by transformed coordinates for ArToVr.");
+            }
+            return data;
         }
+
     }
 }

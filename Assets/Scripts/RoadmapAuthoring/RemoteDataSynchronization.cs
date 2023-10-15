@@ -4,7 +4,6 @@ using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.Networking;
 using System.Collections;
-using System;
 
 namespace ubc.ok.ovilab.roadmap
 {
@@ -14,12 +13,6 @@ namespace ubc.ok.ovilab.roadmap
         private const string DB_SCENE_DATA = "scene_data";
         private const string DB_SCENES = "scenes";
         private const string DB_GROUPS = "groups";
-
-        // See `docs/_calculating_translation.org` for how this is calculated
-        private float zLatOffset = -119.3963448f;
-        private float xLonOffset = 49.93952982f;
-        private float zLatFactor = 71755.33313297f;
-        private float xLonFactor = 111273.39342956f;
 
         private string SceneID()
         {
@@ -160,31 +153,16 @@ namespace ubc.ok.ovilab.roadmap
                     groupStates[_group.identifier] = 1;
                 });
 
+                // FIXME: This if check is not needed?
                 /// if the platforms are different transfrom data
                 if (remoteData.lastWrittenPlatform != localData.lastWrittenPlatform)
                 {
-                    switch (System.Enum.Parse<Platform>(localData.lastWrittenPlatform))
+                    foreach (var _group in groupData)
                     {
-                        case Platform.Oculus:
-                            foreach (var _group in groupData)
-                            {
-                                if (groupStates[_group.Key] == 1)
-                                {
-                                    ArToVr(_group.Value);
-                                }
-                            }
-                            break;
-                        case Platform.ARCore:
-                            foreach (var _group in groupData)
-                            {
-                                if (groupStates[_group.Key] == 1)
-                                {
-                                    VrtoAr(_group.Value);
-                                }
-                            }
-                            break;
-                        default:
-                            throw new System.NotImplementedException();
+                        if (groupStates[_group.Key] == 1)
+                        {
+                            PlatformManager.Instance.ConvertGroupData(_group.Value, System.Enum.Parse<Platform>(localData.lastWrittenPlatform));
+                        }
                     }
                 }
 
@@ -209,21 +187,12 @@ namespace ubc.ok.ovilab.roadmap
             {
                 LocalStorageData data = remoteData.GetData();
                 Platform lastWrittenPlatform = System.Enum.Parse<Platform>(data.lastWrittenPlatform);
+                // FIXME: This if check is not needed?
                 if (lastWrittenPlatform != PlatformManager.Instance.currentPlatform)
                 {
                     foreach (var _group in data.groups)
                     {
-                        switch (lastWrittenPlatform)
-                        {
-                            case Platform.Oculus:
-                                VrtoAr(_group);
-                                break;
-                            case Platform.ARCore:
-                                ArToVr(_group);
-                                break;
-                            default:
-                                throw new System.NotImplementedException();
-                        }
+                        PlatformManager.Instance.ConvertGroupData(_group, lastWrittenPlatform);
                     }
                 }
 
@@ -243,34 +212,6 @@ namespace ubc.ok.ovilab.roadmap
                     callback(remoteData);
                 });
             });
-        }
-
-        protected GroupData VrtoAr(GroupData data)
-        {
-            data.Latitude = data.Latitude / zLatFactor + zLatOffset;
-            data.Longitude = data.Longitude / xLonFactor + xLonOffset;
-            data.Altitude = 0; // Using the terrain coordinates, sets to zero on ground
-            return data;
-        }
-
-        protected GroupData ArToVr(GroupData data)
-        {
-            data.Latitude = (data.Latitude - zLatOffset)  * zLatFactor;
-            data.Longitude = (data.Longitude - xLonOffset) * xLonFactor;
-
-            Vector3 rayOrigin = new Vector3((float)data.Longitude, (float)data.Latitude, 20);
-
-            RaycastHit hit;
-            // Does the ray intersect terrain TODO: terrain layer?
-            if (Physics.Raycast(rayOrigin, Vector3.down, out hit, Mathf.Infinity, 8))
-            {
-                data.Altitude = hit.point.y;
-            }
-            else
-            {
-                throw new Exception("Tarrain missed by transformed coordinates for ArToVr.");
-            }
-            return data;
         }
 
         protected void ProcessRequest(string endpoint, HTTPMethod method, System.Action<string> action=null, string data="")
