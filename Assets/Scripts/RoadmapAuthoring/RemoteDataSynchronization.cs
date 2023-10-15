@@ -4,6 +4,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.Networking;
 using System.Collections;
+using System;
 
 namespace ubc.ok.ovilab.roadmap
 {
@@ -15,16 +16,10 @@ namespace ubc.ok.ovilab.roadmap
         private const string DB_GROUPS = "groups";
 
         // See `docs/_calculating_translation.org` for how this is calculated
-        private float vrToArLatitude_coeff = -0.00000578448593347400f;
-        private float vrToArLatitude_bias = 49.94559341523613227309f;
-        private float vrToArLongitude_coeff = -0.00000908882014213997f;
-        private float vrToArLongitude_bias = -119.39037547356433321966f;
-        private float vrToArAltitude = 440;
-        private float arToVrLatitude_coeff = -172876.20913954381830990314f;
-        private float arToVrLatitude_bias = 8634404.85285098478198051453f;
-        private float arToVrLongitude_coeff = -110025.28208953527791891247f;
-        private float arToVrLongitude_bias = -13135959.74025445058941841125f;
-        private float arToVrAltitude = -440;
+        private float zLatOffset = -119.3963448f;
+        private float xLonOffset = 49.93952982f;
+        private float zLatFactor = 71755.33313297f;
+        private float xLonFactor = 111273.39342956f;
 
         private string SceneID()
         {
@@ -252,17 +247,29 @@ namespace ubc.ok.ovilab.roadmap
 
         protected GroupData VrtoAr(GroupData data)
         {
-            data.Latitude = vrToArLatitude_coeff * data.Latitude + vrToArLatitude_bias;
-            data.Longitude = vrToArLongitude_coeff * data.Latitude + vrToArLongitude_bias;
-            data.Altitude = data.Altitude + vrToArAltitude;
+            data.Latitude = data.Latitude / zLatFactor + zLatOffset;
+            data.Longitude = data.Longitude / xLonFactor + xLonOffset;
+            data.Altitude = 0; // Using the terrain coordinates, sets to zero on ground
             return data;
         }
 
         protected GroupData ArToVr(GroupData data)
         {
-            data.Latitude = arToVrLatitude_coeff * data.Latitude + arToVrLatitude_bias;
-            data.Longitude = arToVrLongitude_coeff * data.Longitude + arToVrLongitude_bias;
-            data.Altitude = data.Altitude + arToVrAltitude;
+            data.Latitude = (data.Latitude - zLatOffset)  * zLatFactor;
+            data.Longitude = (data.Longitude - xLonOffset) * xLonFactor;
+
+            Vector3 rayOrigin = new Vector3((float)data.Longitude, (float)data.Latitude, 20);
+
+            RaycastHit hit;
+            // Does the ray intersect terrain TODO: terrain layer?
+            if (Physics.Raycast(rayOrigin, Vector3.down, out hit, Mathf.Infinity, 8))
+            {
+                data.Altitude = hit.point.y;
+            }
+            else
+            {
+                throw new Exception("Tarrain missed by transformed coordinates for ArToVr.");
+            }
             return data;
         }
 
