@@ -90,7 +90,10 @@
 : 67.85943472445116
 
 #+begin_src jupyter-python
-  center = p2 + p3 / 2
+  center = (p2 + p3) / 2
+  print("all z,x")
+  print("center", center)
+  print("factor", factor)
   print("point p1",(p1 - center) * factor)
   print("point p2",(p2 - center) * factor)
   print("point p3",(p3 - center) * factor)
@@ -98,7 +101,10 @@
 #+end_src
 
 #+RESULTS:
-: point p1 [-2778485.72225615  4283634.49669712]
-: point p2 [-2778487.77814594  4283668.25621978]
-: point p3 [-2778418.56362216  4283644.22401751]
-: point p4 [-2778422.44692153  4283727.70731522]
+: all z,x
+: center [  49.93952982 -119.3963448 ]
+: factor [111273.39342956  71755.33313297]
+: point p1 [-32.5513721  -21.74342153]
+: point p2 [-34.60726189  12.01610114]
+: point p3 [ 34.60726189 -12.01610114]
+: point p4 [30.72396252 71.46719657]
