@@ -192,7 +192,7 @@ namespace ubc.ok.ovilab.roadmap
                 DebugMessages.Instance.LogToDebugText($"Earth state not enabled  {earthState}");
                 if (earthState != EarthState.ErrorEarthNotReady)
                 {
-                    enabled = false;
+                    // enabled = false;
                 }
                 return;
             }
