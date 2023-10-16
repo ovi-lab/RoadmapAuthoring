@@ -1,20 +1,32 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DropdownController : MonoBehaviour
+namespace ubc.ok.ovilab.roadmap
 {
-    public GameObject[] objectDropdown;
-    public GameObject[] objectsToToggle;
-
-    private bool objectsVisible = false;
-
-    public void ToggleObjectsVisibility()
+    /// <summary>
+    /// Used to populate the items for the add button on the UI
+    /// </summary>
+    public class DropdownController : MonoBehaviour
     {
-        objectsVisible = !objectsVisible;
+        [Tooltip("The prefab to use to generate items in the dropdown.")]
+        public GameObject itemPrefab;
+        [Tooltip("The root object of the dropdown menu.")]
+        public GameObject menuRoot;
 
-        foreach (GameObject obj in objectsToToggle)
+        private void Start()
         {
-            obj.SetActive(objectsVisible);
+            RoadmapApplicationConfig config = PlaceablesManager.Instance.applicationConfig;
+            foreach(string placeableIdentifer in config.PlacableIdentifierList())
+            {
+                GameObject go = Instantiate(itemPrefab, this.transform);
+                go.transform.name = placeableIdentifer;
+                go.GetComponentInChildren<TextMeshProUGUI>().text = placeableIdentifer;
+                go.GetComponent<Button>().onClick.AddListener(() => {
+                    PlaceablesManager.Instance.SpawnObject(placeableIdentifer);
+                    menuRoot.SetActive(false);
+                });
+            }
         }
     }
 }

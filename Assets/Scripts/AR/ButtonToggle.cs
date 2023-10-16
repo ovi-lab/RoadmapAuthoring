@@ -1,31 +1,52 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class ButtonToggle : MonoBehaviour
+namespace ubc.ok.ovilab.roadmap
 {
-    public Button modifyButton;
-    public Button addButton;
-    public Button deleteButton;
-    public Button syncButton;
-
-    private bool isButtonsVisible = false;
-
-    private void Start()
+    /// <summary>
+    /// Toggle behaviour to canvas buttons
+    /// </summary>
+    public class ButtonToggle : MonoBehaviour
     {
-        // Initialize button visibility
-        ToggleButtonsVisibility();
+        public UnityEvent onToggled;
+        public UnityEvent onUntoggled;
 
-        // Add a click event listener to the Modify button
-        modifyButton.onClick.AddListener(ToggleButtonsVisibility);
-    }
+        private bool toggleOn = false;
 
-    private void ToggleButtonsVisibility()
-    {
-        // Toggle the visibility of the other buttons
-        isButtonsVisible = !isButtonsVisible;
+        // Unity method
+        private void Start()
+        {
+            // initilize toggle states
+            if (toggleOn)
+            {
+                onToggled?.Invoke();
+            }
+            else
+            {
+                onUntoggled?.Invoke();
+            }
 
-        addButton.gameObject.SetActive(isButtonsVisible);
-        deleteButton.gameObject.SetActive(isButtonsVisible);
-        syncButton.gameObject.SetActive(isButtonsVisible);
+            // Add a click event listener to the Modify button
+            GetComponent<Button>().onClick.AddListener(ToggleButtonsVisibility);
+        }
+
+        /// <summary>
+        /// Triggers the appropriate event based on the toggle status
+        /// </summary>
+        private void ToggleButtonsVisibility()
+        {
+            // Toggle the visibility of the other buttons
+            toggleOn = !toggleOn;
+
+            if (toggleOn)
+            {
+                onToggled?.Invoke();
+            }
+            else
+            {
+                onUntoggled?.Invoke();
+            }
+        }
     }
 }
