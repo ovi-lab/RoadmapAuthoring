@@ -7,6 +7,7 @@ using System.Collections;
 
 namespace ubc.ok.ovilab.roadmap
 {
+    [RequireComponent(typeof(PopupManager))]
     public class RemoteDataSynchronization : MonoBehaviour
     {
         private const string SERVER_URL = "https://roadmap-ubco-default-rtdb.firebaseio.com/";
@@ -27,14 +28,21 @@ namespace ubc.ok.ovilab.roadmap
 
         }
 
+        private PopupManager popupManager;
+
+        #region Unity functions
         private void Start()
         {
             if (PlayerPrefs.HasKey(_playerPrefsStorageKey))
             {
                 lastPushedSceneDataId = PlayerPrefs.GetString(_playerPrefsStorageKey);
             }
-        }
 
+            popupManager = GetComponent<PopupManager>();
+        }
+        #endregion
+
+        #region Sync functions
         /// <summary>
         /// Get the active scene ID to use
         /// </summary>
@@ -66,7 +74,7 @@ namespace ubc.ok.ovilab.roadmap
                 {
                     ProcessRequest($"/{DB_SCENES}/{SceneID()}/{DB_GROUPS}/{GroupID()}", HTTPMethod.PUT, data: JsonConvert.SerializeObject(true), action: (_) =>
                     {
-                        ProcessRequest($"/{DB_GROUPS}/{GroupID()}/{DB_SCENES}/{SceneID()}", HTTPMethod.PUT, data:  JsonConvert.SerializeObject(true), action: (_) =>
+                        ProcessRequest($"/{DB_GROUPS}/{GroupID()}/{DB_SCENES}/{SceneID()}", HTTPMethod.PUT, data: JsonConvert.SerializeObject(true), action: (_) =>
                         {
                             callable();
                         });
@@ -135,7 +143,7 @@ namespace ubc.ok.ovilab.roadmap
                         long remoteLatestUpdate = remotePlaceables.Select(x => x.Value.lastUpdate).Max();
                         bool useRemote = true;
 
-                        foreach(KeyValuePair<string, PlaceableObjectData> localPlaceableKVP in localPlaceables)
+                        foreach (KeyValuePair<string, PlaceableObjectData> localPlaceableKVP in localPlaceables)
                         {
                             /// When a plceable is in both, pick the one that has the largest timestamp
                             if (remotePlaceables.ContainsKey(localPlaceableKVP.Key))
@@ -278,11 +286,13 @@ namespace ubc.ok.ovilab.roadmap
                 LastPushedSceneDataId = null;
             }
         }
+        #endregion
 
+        #region Helper functions
         /// <summary>
         /// Helper method to execute web request asynchronously.
         /// </summary>
-        protected void ProcessRequest(string endpoint, HTTPMethod method, System.Action<string> action=null, string data="")
+        protected void ProcessRequest(string endpoint, HTTPMethod method, System.Action<string> action = null, string data = "")
         {
             StartCoroutine(GetJsonUrl(endpoint, method, action, data));
         }
@@ -310,7 +320,7 @@ namespace ubc.ok.ovilab.roadmap
         /// <summary>
         /// Helper method to get a json result from a http request.
         /// </summary>
-        protected IEnumerator GetJsonUrl(string endpoint, HTTPMethod method, System.Action<string> action=null, string data="")
+        protected IEnumerator GetJsonUrl(string endpoint, HTTPMethod method, System.Action<string> action = null, string data = "")
         {
             string url = $"{SERVER_URL}{endpoint}.json";
             using (UnityWebRequest webRequest = GetMethod(method, url, data))
@@ -339,6 +349,33 @@ namespace ubc.ok.ovilab.roadmap
                 }
             }
         }
+        #endregion
+
+        #region UI functions
+        public void OverwriteRemoteWithPrompt()
+        {
+            popupManager.OpenDialogWithMessage("Overwrite the remote?", "Yes", OverwriteRemote, () => { });
+        }
+
+        public void OverwriteLocalWithPrompt()
+        {
+            popupManager.OpenDialogWithMessage("Overwrite the local?", "Yes", OverwriteLocal, () => { });
+        }
+
+        public void SyncWithRemoteWithPrompt()
+        {
+            popupManager.OpenDialogWithMessage("Synchronize remote and local?", "Yes", () =>
+            {
+                LocalStorageData localDataBeforeSync = PlaceablesManager.Instance.GetLocalStorageData();
+                SyncWithRemote();
+                popupManager.OpenDialogWithMessage("Sync was a success?", "Yes", () => { }, "No(revert)", () =>
+                {
+                    RemoveLastRemoteStorageData();
+                    PlaceablesManager.Instance.LoadFromLocalStorageData(localDataBeforeSync);
+                }, () => { });
+            }, () => { });
+        }
+        #endregion
     }
 
     [System.Serializable]

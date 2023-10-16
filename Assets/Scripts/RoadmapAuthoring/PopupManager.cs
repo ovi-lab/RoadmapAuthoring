@@ -11,7 +11,7 @@ namespace ubc.ok.ovilab.roadmap
 
         public virtual void OpenDialogWithMessage(string text, string yeaString, System.Action yeaCallback, System.Action dismissCallback)
         {
-            OpenDialogWithMessage(text, yeaString, yeaCallback, "Cancel", null, dismissCallback);
+            OpenDialogWithMessage(text, yeaString, yeaCallback, "Cancel", () => {}, dismissCallback);
         }
 
         public virtual void OpenDialogWithMessage(string text, System.Action dismissCallback)
