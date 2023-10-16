@@ -12,5 +12,10 @@ namespace ubc.ok.ovilab.roadmap
             this.groups = groups;
             this.lastWrittenPlatform = lastWrittenPlatform;
         }
+
+        public override string ToString()
+        {
+            return $"plaform: {lastWrittenPlatform}\ngroups[{groups.Count}]:\n " + string.Join("\n ", groups);
+        }
     }
 }

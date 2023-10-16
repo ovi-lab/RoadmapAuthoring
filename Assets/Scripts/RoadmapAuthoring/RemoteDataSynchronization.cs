@@ -169,7 +169,8 @@ namespace ubc.ok.ovilab.roadmap
                 /// localData has the current platform set as LastWrittenPlatform
                 LocalStorageData result = new LocalStorageData(groupData.Values.ToList(), localData.lastWrittenPlatform);
 
-                /// Write local data
+                /// Clear and write local data
+                PlaceablesManager.Instance.ClearData();
                 PlaceablesManager.Instance.LoadFromLocalStorageData(result);
                 /// Write remote data
                 SaveSceneData(result);
@@ -196,6 +197,7 @@ namespace ubc.ok.ovilab.roadmap
                     }
                 }
 
+                PlaceablesManager.Instance.ClearData();
                 PlaceablesManager.Instance.LoadFromLocalStorageData(data);
             });
         }

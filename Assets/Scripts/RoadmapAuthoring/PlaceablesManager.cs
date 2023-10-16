@@ -91,7 +91,7 @@ namespace ubc.ok.ovilab.roadmap
 
             System.IO.File.WriteAllText(GetSaveFileLocation(), jsonString);
             PlayerPrefs.Save();
-            Debug.Log($"Saving data");
+            Debug.Log($"Saving data\n{storageData}");
         }
 
         /// <summary>
@@ -109,7 +109,6 @@ namespace ubc.ok.ovilab.roadmap
         {
             DestroyAll();
             groups.Clear();
-            SetupGroup(null);
             PlayerPrefs.DeleteAll();
             PlayerPrefs.SetString("BuildKey", applicationConfig.buildKey);
             PlayerPrefs.Save();
@@ -125,7 +124,6 @@ namespace ubc.ok.ovilab.roadmap
             if (!PlayerPrefs.HasKey(_playerPrefsStorageKey))
             {
                 Debug.Log("Nothing to load");
-                SetupGroup(null);
                 return;
             }
 
@@ -139,11 +137,8 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public void LoadFromLocalStorageData(LocalStorageData storageData)
         {
+            Debug.Log($"Loading data\n{storageData}");
             storageData.groups.ForEach(groupData => SetupGroup(groupData));
-            if (currentGroup == null)
-            {
-                SetupGroup(null);
-            }
         }
 
         /// <summary>
@@ -170,7 +165,6 @@ namespace ubc.ok.ovilab.roadmap
 
                 // TODO: group selection
                 currentGroup = placeablesGroup;
-
             });
         }
 
@@ -194,7 +188,15 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public void SpawnObject(string identifier)
         {
-            PlaceableObject placeableObject = currentGroup.AddPlaceableObject(identifier, "", OnPlaceableClicked);
+            if (currentGroup == null)
+            {
+                SetupGroup(null);
+                groupAnchorFactory.AddActionToRunWhenReady(() => currentGroup.AddPlaceableObject(identifier, "", OnPlaceableClicked));
+            }
+            else
+            {
+                currentGroup.AddPlaceableObject(identifier, "", OnPlaceableClicked);
+            }
         }
 
         /// <summary>

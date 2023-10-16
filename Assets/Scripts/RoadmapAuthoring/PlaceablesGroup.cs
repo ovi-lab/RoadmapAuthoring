@@ -13,6 +13,7 @@ namespace ubc.ok.ovilab.roadmap
     /// </summary>
     public class PlaceablesGroup : MonoBehaviour
     {
+        private static List<string> usedGroupIds = new List<string>();
         private List<PlaceableObject> placeableObjects;
         private string identifier;
 
@@ -28,7 +29,6 @@ namespace ubc.ok.ovilab.roadmap
         public void Init(GroupData data, System.Action<PlaceableObject> onClickedCallback)
         {
             placeableObjects = new List<PlaceableObject>();
-            identifier = System.Guid.NewGuid().ToString();
 
             if (data != null)
             {
@@ -37,7 +37,17 @@ namespace ubc.ok.ovilab.roadmap
                     PlaceableObject placeableObject = AddPlaceableObject(objectData.prefabIdentifier, objectData.identifier, onClickedCallback,
                                                                          objectData.localPosition, objectData.localRotation, objectData.localScale, objectData.lastUpdate);
                 }
+                identifier = data.identifier;
             }
+            else
+            {
+                do
+                {
+                    identifier = System.Guid.NewGuid().ToString();
+                } while (usedGroupIds.Contains(identifier));
+            }
+
+            usedGroupIds.Add(identifier);
         }
 
         /// <summary>

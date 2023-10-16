@@ -21,5 +21,10 @@ namespace ubc.ok.ovilab.roadmap
             Heading = heading;
             PlaceableDataList = placeableDataList;
         }
+
+        public override string ToString()
+        {
+            return $"Group ({identifier} @ ({Latitude}, {Longitude})) with[{PlaceableDataList.Count}]:\n   " + string.Join("\n   ", PlaceableDataList);
+        }
     }
 }

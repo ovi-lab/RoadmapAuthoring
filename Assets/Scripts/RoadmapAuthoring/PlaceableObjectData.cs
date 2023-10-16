@@ -23,5 +23,10 @@ namespace ubc.ok.ovilab.roadmap
             this.auxData = auxData;
             this.lastUpdate = lastUpdate;
         }
+
+        public override string ToString()
+        {
+            return $"Obj({identifier} based on {prefabIdentifier} @ {localPosition} @ {lastUpdate})";
+        }
     }
 }
