@@ -34,7 +34,10 @@ namespace ubc.ok.ovilab.roadmap
             this.identifier = $"{prefabIdentifier} {identifier}";
             this.lastUpdate = lastUpdate;
             this.placeablesGroup = placeablesGroup;
-            GetComponent<ObjectManipulator>().OnClicked.AddListener(OnClickCallback);
+            ObjectManipulator objectManipulator = GetComponent<ObjectManipulator>();
+            objectManipulator.OnClicked.AddListener(OnClickCallback);
+            objectManipulator.selectExited.AddListener(UpdateLastUpdate);
+            GetComponent<BoundsControl>().ManipulationEnded.AddListener(UpdateLastUpdate);
         }
 
         /// <summary>
@@ -60,8 +63,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         internal PlaceableObjectData GetPlaceableObjectData()
         {
-            // TODO: Use lastUpdate
-            return new PlaceableObjectData(prefabIdentifier, identifier, transform.localPosition, transform.localRotation, transform.localScale, System.DateTime.Now.Ticks);
+            return new PlaceableObjectData(prefabIdentifier, identifier, transform.localPosition, transform.localRotation, transform.localScale, lastUpdate);
         }
 
         /// <summary>
@@ -87,6 +89,14 @@ namespace ubc.ok.ovilab.roadmap
         public void OnClickCallback()
         {
             onClickedCallback?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Callback for the manipulation handles to set the lastUpdate
+        /// </summary>
+        private void UpdateLastUpdate(SelectExitEventArgs arg0)
+        {
+            lastUpdate = System.DateTime.Now.Ticks;
         }
 
         /// <summary>
