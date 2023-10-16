@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
@@ -36,6 +34,13 @@ namespace ubc.ok.ovilab.roadmap
             if (GUILayout.Button("Overwrite Local"))
             {
                 t.OverwriteLocal();
+            }
+
+            EditorGUILayout.Separator();
+
+            if (GUILayout.Button("Delete last push"))
+            {
+                t.RemoveLastRemoteStorageData();
             }
 
             GUI.enabled = Application.isPlaying;

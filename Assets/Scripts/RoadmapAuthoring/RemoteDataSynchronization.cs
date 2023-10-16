@@ -13,12 +13,39 @@ namespace ubc.ok.ovilab.roadmap
         private const string DB_SCENE_DATA = "scene_data";
         private const string DB_SCENES = "scenes";
         private const string DB_GROUPS = "groups";
+        private const string _playerPrefsStorageKey = "RoadMapStorageSyncLastPushed";
 
+        private string lastPushedSceneDataId;
+        private string LastPushedSceneDataId
+        {
+            get => lastPushedSceneDataId;
+            set
+            {
+                PlayerPrefs.SetString(_playerPrefsStorageKey, value);
+                lastPushedSceneDataId = value;
+            }
+
+        }
+
+        private void Start()
+        {
+            if (PlayerPrefs.HasKey(_playerPrefsStorageKey))
+            {
+                lastPushedSceneDataId = PlayerPrefs.GetString(_playerPrefsStorageKey);
+            }
+        }
+
+        /// <summary>
+        /// Get the active scene ID to use
+        /// </summary>
         private string SceneID()
         {
             return $"{PlaceablesManager.Instance.applicationConfig.buildKey}";
         }
 
+        /// <summary>
+        /// Get the group id to use.
+        /// </summary>
         private string GroupID()
         {
             if (string.IsNullOrEmpty(PlaceablesManager.Instance.applicationConfig.groupID))
@@ -28,7 +55,9 @@ namespace ubc.ok.ovilab.roadmap
             return $"{PlaceablesManager.Instance.applicationConfig.groupID}";
         }
 
+        /// <summary>
         /// Run callable after verifying the scene exists in "scenes"
+        /// </summary>
         private void CheckSceneInScenes(System.Action callable)
         {
             ProcessRequest($"/{DB_SCENES}/{SceneID()}", HTTPMethod.GET, (dataString) =>
@@ -50,6 +79,9 @@ namespace ubc.ok.ovilab.roadmap
             });
         }
 
+        /// <summary>
+        /// Save the scene data to the remote.
+        /// </summary>
         public void SaveSceneData(LocalStorageData data)
         {
             CheckSceneInScenes(() =>
@@ -61,13 +93,19 @@ namespace ubc.ok.ovilab.roadmap
                     string name = JsonConvert.DeserializeAnonymousType(nameString, new { name = "" }).name;
                     ProcessRequest($"/{DB_SCENE_DATA}/{name}", HTTPMethod.PUT, (dataString) =>
                     {
-                        ProcessRequest($"/{DB_SCENES}/{SceneID()}/{DB_SCENE_DATA}/{name}", HTTPMethod.PUT, null, JsonConvert.SerializeObject(sceneData.commit_time));
+                        ProcessRequest($"/{DB_SCENES}/{SceneID()}/{DB_SCENE_DATA}/{name}", HTTPMethod.PUT, (_) =>
+                        {
+                            LastPushedSceneDataId = name; // Set only if everything went smooth!
+                        }, JsonConvert.SerializeObject(sceneData.commit_time));
                     }, JsonConvert.SerializeObject(sceneData, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-                }, JsonConvert.SerializeObject(true));
 
+                }, JsonConvert.SerializeObject(true));
             });
         }
 
+        /// <summary>
+        /// Combine data from scene and local. Overwrites both local and remote.
+        /// </summary>
         public void SyncWithRemote()
         {
             LocalStorageData localData = PlaceablesManager.Instance.GetLocalStorageData();
@@ -180,11 +218,17 @@ namespace ubc.ok.ovilab.roadmap
             });
         }
 
+        /// <summary>
+        /// Make the current scene the latest version on the remote.
+        /// </summary>
         public void OverwriteRemote()
         {
             SaveSceneData(PlaceablesManager.Instance.GetLocalStorageData());
         }
 
+        /// <summary>
+        /// Make the latest version on the remote the current scene.
+        /// </summary>
         public void OverwriteLocal()
         {
             ProcessRemoteStorageData((remoteData) =>
@@ -205,6 +249,9 @@ namespace ubc.ok.ovilab.roadmap
             });
         }
 
+        /// <summary>
+        /// Exectue callback with the latest scene data on remote.
+        /// </summary>
         public void ProcessRemoteStorageData(System.Action<RemoteStorageData> callback)
         {
             ProcessRequest($"/{DB_SCENES}/{SceneID()}/{DB_SCENE_DATA}", HTTPMethod.GET, (idStrings) =>
@@ -219,11 +266,30 @@ namespace ubc.ok.ovilab.roadmap
             });
         }
 
+        /// <summary>
+        /// Delete the last pushed scene data
+        /// </summary>
+        public void RemoveLastRemoteStorageData()
+        {
+            if (!string.IsNullOrEmpty(LastPushedSceneDataId))
+            {
+                ProcessRequest($"/{DB_SCENE_DATA}/{LastPushedSceneDataId}", HTTPMethod.DELETE);
+                ProcessRequest($"/{DB_SCENES}/{SceneID()}/{DB_SCENE_DATA}/{LastPushedSceneDataId}", HTTPMethod.DELETE);
+                LastPushedSceneDataId = null;
+            }
+        }
+
+        /// <summary>
+        /// Helper method to execute web request asynchronously.
+        /// </summary>
         protected void ProcessRequest(string endpoint, HTTPMethod method, System.Action<string> action=null, string data="")
         {
             StartCoroutine(GetJsonUrl(endpoint, method, action, data));
         }
 
+        /// <summary>
+        /// Helper method for a get http request.
+        /// </summary>
         protected UnityWebRequest GetMethod(HTTPMethod method, string url, string data)
         {
             switch (method)
@@ -234,11 +300,16 @@ namespace ubc.ok.ovilab.roadmap
                     return UnityWebRequest.PostWwwForm(url, data);
                 case HTTPMethod.PUT:
                     return UnityWebRequest.Put(url, data);
+                case HTTPMethod.DELETE:
+                    return UnityWebRequest.Delete(url);
                 default:
                     throw new System.NotImplementedException();
             }
         }
 
+        /// <summary>
+        /// Helper method to get a json result from a http request.
+        /// </summary>
         protected IEnumerator GetJsonUrl(string endpoint, HTTPMethod method, System.Action<string> action=null, string data="")
         {
             string url = $"{SERVER_URL}{endpoint}.json";
@@ -298,6 +369,6 @@ namespace ubc.ok.ovilab.roadmap
     }
 
     public enum HTTPMethod {
-        GET, POST, PUT
+        GET, POST, PUT, DELETE
     }
 }
