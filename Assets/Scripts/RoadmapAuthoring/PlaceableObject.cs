@@ -29,9 +29,12 @@ namespace ubc.ok.ovilab.roadmap
             this.prefabIdentifier = prefabIdentifier;
             if (string.IsNullOrEmpty(identifier))
             {
-                identifier = System.Guid.NewGuid().ToString();
+                this.identifier = $"{prefabIdentifier} {System.Guid.NewGuid().ToString()}";
             }
-            this.identifier = $"{prefabIdentifier} {identifier}";
+            else
+            {
+                this.identifier = identifier;
+            }
             this.lastUpdate = lastUpdate;
             this.placeablesGroup = placeablesGroup;
             ObjectManipulator objectManipulator = GetComponent<ObjectManipulator>();

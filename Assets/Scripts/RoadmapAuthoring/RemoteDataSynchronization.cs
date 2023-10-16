@@ -110,7 +110,7 @@ namespace ubc.ok.ovilab.roadmap
                             /// Add placeables only in local
                             else
                             {
-                                remotePlaceables[localPlaceableKVP.Key] = localPlaceableKVP.Value;
+                                remotePlaceables.Add(localPlaceableKVP.Key, localPlaceableKVP.Value);
                             }
 
                             /// Checking if there is a local updated later than remoteLatestUpdate
@@ -149,8 +149,11 @@ namespace ubc.ok.ovilab.roadmap
                 /// Adding groups only in remote
                 remoteData.groups.ForEach(_group =>
                 {
-                    groupData[_group.identifier] = _group;
-                    groupStates[_group.identifier] = 1;
+                    if (!groupData.ContainsKey(_group.identifier))
+                    {
+                        groupData[_group.identifier] = _group;
+                        groupStates[_group.identifier] = 1;
+                    }
                 });
 
                 // FIXME: This if check is not needed?
@@ -207,7 +210,7 @@ namespace ubc.ok.ovilab.roadmap
             ProcessRequest($"/{DB_SCENES}/{SceneID()}/{DB_SCENE_DATA}", HTTPMethod.GET, (idStrings) =>
             {
                 Dictionary<string, long> sceneData = JsonConvert.DeserializeObject<Dictionary<string, long>>(idStrings);
-                string sceneDataId = sceneData.OrderByDescending(kvp => kvp.Key).First().Key;
+                string sceneDataId = sceneData.OrderByDescending(kvp => kvp.Value).First().Key;
                 ProcessRequest($"/{DB_SCENE_DATA}/{sceneDataId}", HTTPMethod.GET, (dataString) =>
                 {
                     RemoteStorageData remoteData = JsonUtility.FromJson<RemoteStorageData>(dataString);
