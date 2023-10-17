@@ -16,10 +16,10 @@ namespace ubc.ok.ovilab.roadmap
         [SerializeField] public Platform currentPlatform;
 
         // See `docs/_calculating_translation.org` for how this is calculated
-        private float zLatOffset = -119.3963448f;
-        private float xLonOffset = 49.93952982f;
-        private float zLatFactor = 71755.33313297f;
-        private float xLonFactor = 111273.39342956f;
+        private float zLatOffset = 49.93952982f;
+        private float xLonOffset = -119.3963448f;
+        private float zLatFactor = 111273.39342956f;
+        private float xLonFactor = 71755.33313297f;
 
         /// <summary>
         /// Convert group date between platforms.

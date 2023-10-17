@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Google.XR.ARCoreExtensions;
 using UnityEngine;
 using UnityEngine.Android;
@@ -38,24 +39,87 @@ namespace ubc.ok.ovilab.roadmap
             if (groupData != null)
             {
                 Quaternion quaternion = Quaternion.AngleAxis((float)groupData.Heading, Vector3.up);
-                groupObject = anchorManager.AddAnchor(groupData.Latitude, groupData.Longitude, groupData.Altitude, quaternion)?.gameObject;
+                Debug.Log($"{quaternion.eulerAngles}, {groupData.Longitude} {groupData.Latitude}  {groupData.Altitude}  {groupData.Heading} 111 "+ quaternion.ToString("F4"));
+                // TODO TEST
+
+                GeospatialPose pose = earthManager.CameraGeospatialPose;
+                // Get forward from the EunRotation then project that on the xz plane. Use that to get rotation around y axis
+                Quaternion quaternion1 = Quaternion.LookRotation(Vector3.ProjectOnPlane(pose.EunRotation * Vector3.forward, Vector3.up), Vector3.up);
+
+                Debug.Log($"{quaternion.eulerAngles}, {pose.Latitude} {pose.Longitude}, {pose.Altitude} 22 " + quaternion1.ToString("F4"));
+                var somepromise2 = anchorManager.ResolveAnchorOnTerrainAsync(pose.Latitude, pose.Longitude, 0, quaternion1);
+                var somepromise3 = anchorManager.ResolveAnchorOnTerrainAsync(pose.Latitude, groupData.Longitude, 0, quaternion1);
+                var somepromise4 = anchorManager.ResolveAnchorOnTerrainAsync(groupData.Latitude, pose.Longitude, 0, quaternion1);
+                var somepromise5 = anchorManager.ResolveAnchorOnTerrainAsync(pose.Latitude, pose.Longitude, 0, quaternion);
+                var somepromise = anchorManager.ResolveAnchorOnTerrainAsync(groupData.Latitude, groupData.Longitude, 0, quaternion1);
+
+                StartCoroutine(CheckTerrainPromise(somepromise, "groupdata"));
+                StartCoroutine(CheckTerrainPromise(somepromise2, "pose data"));
+                StartCoroutine(CheckTerrainPromise(somepromise3, "pose + g lon"));
+                StartCoroutine(CheckTerrainPromise(somepromise4, "pose + g lat"));
+                StartCoroutine(CheckTerrainPromise(somepromise5, "pose + g quat"));
+
+                // TODO TESTEND
+                groupObject = anchorManager.ResolveAnchorOnTerrain(groupData.Latitude, groupData.Longitude, 0, quaternion)?.gameObject;
             }
             else
             {
                 GeospatialPose pose = earthManager.CameraGeospatialPose;
                 // Get forward from the EunRotation then project that on the xz plane. Use that to get rotation around y axis
                 Quaternion quaternion = Quaternion.LookRotation(Vector3.ProjectOnPlane(pose.EunRotation * Vector3.forward, Vector3.up), Vector3.up);
-                groupObject = anchorManager.AddAnchor(pose.Latitude, pose.Longitude, pose.Altitude, quaternion)?.gameObject;
+                Debug.Log($"{quaternion.eulerAngles}, {pose.Latitude} {pose.Longitude}, {pose.Altitude} 22");
+                groupObject = anchorManager.ResolveAnchorOnTerrain(pose.Latitude, pose.Longitude, 0, quaternion)?.gameObject;
             }
 
             if (groupObject == null)
             {
-                throw new Exception("Failed to initilize group");
+                // TODO
+                // throw new Exception("Failed to initilize group");
             }
 
             PlaceablesGroup placeablesGroup = groupObject.AddComponent<PlaceablesGroup>();
             placeablesGroup.Init(groupData, onClickedCallback);
             return placeablesGroup;
+        }
+
+        // TODO TEST
+        private IEnumerator CheckTerrainPromise(ResolveAnchorOnTerrainPromise promise, string msg)
+        {
+            yield return promise;
+
+            var result = promise.Result;
+            switch (result.TerrainAnchorState)
+            {
+                case TerrainAnchorState.Success:
+                    DebugMessages.Instance.LogToDebugText($"Anchor has successfully resolved - {msg}");
+                    break;
+                case TerrainAnchorState.ErrorUnsupportedLocation:
+                    DebugMessages.Instance.LogToDebugText($"The requested anchor is in a location that isn't supported by the Geospatial API. - {msg}");
+                    break;
+                case TerrainAnchorState.ErrorNotAuthorized:
+                    DebugMessages.Instance.LogToDebugText($"An error occurred while authorizing your app with the ARCore API. See - {msg}");
+                    // https://developers.google.com/ar/reference/unity-arf/namespace/Google/XR/ARCoreExtensions#terrainanchorstate_errornotauthorized
+                    // for troubleshooting steps.
+                    break;
+                case TerrainAnchorState.ErrorInternal:
+                    DebugMessages.Instance.LogToDebugText($"The Terrain anchor could not be resolved due to an internal error. - {msg}");
+                    break;
+                default:
+                    break;
+            }
+            if (result.TerrainAnchorState == TerrainAnchorState.Success &&
+                result.Anchor != null)
+            {
+                // resolving anchor succeeded
+                Debug.Log($"YAYYYYY");
+            }
+            else
+            {
+                // resolving anchor failed
+                Debug.Log($"BOOOOOOO");
+            }
+
+            yield break;
         }
 
         /// <summary>

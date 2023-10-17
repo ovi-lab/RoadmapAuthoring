@@ -52,6 +52,7 @@ namespace ubc.ok.ovilab.roadmap
                 yeaButton.gameObject.SetActive(true);
                 UnityAction yeaCallbackAction = new UnityAction(yeaCallback);
                 yeaButton.onClick.AddListener(yeaCallbackAction);
+                yeaButton.onClick.AddListener(DismissPopup);
                 yeaText.text = yeaString;
             }
             else
