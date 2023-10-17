@@ -18,7 +18,7 @@ namespace ubc.ok.ovilab.roadmap
     {
         private static Dictionary<Platform, string> platformLoaderNames = new Dictionary<Platform, string> {
             {Platform.ARCore, "UnityEngine.XR.ARCore.ARCoreLoader"},
-            {Platform.Oculus, "Unity.XR.Oculus.OculusLoader"},
+            {Platform.Oculus, null},
         };
 
         private string buildPath = "Builds/build.apk";
@@ -132,7 +132,7 @@ namespace ubc.ok.ovilab.roadmap
             XRGeneralSettings settings = buildTargetSettings.SettingsForBuildTarget(BuildTargetGroup.Android);
             foreach (var keyValuePair in platformLoaderNames)
             {
-                if (keyValuePair.Key == platform)
+                if (keyValuePair.Key == platform && !string.IsNullOrEmpty(keyValuePair.Value))
                 {
                     XRPackageMetadataStore.AssignLoader(settings.Manager, keyValuePair.Value, BuildTargetGroup.Android);
                 }

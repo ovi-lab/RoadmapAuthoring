@@ -16,6 +16,7 @@ namespace ubc.ok.ovilab.roadmap
         [SerializeField] private ARAnchorManager anchorManager;
         [SerializeField] private ARCoreExtensions arCoreExtensions;
         [Header("[ Accuracy Minimums ] - Required to start experience")]
+        [SerializeField] private bool checkMinimums = false;
         [SerializeField] private float minimumHorizontalAccuracy = 10;//10
         [SerializeField] private float minimumOrientationAccuracy = 10;//15
         [SerializeField] private float minimumVerticalAccuracy = 10.5f;//1.5f
@@ -107,7 +108,10 @@ namespace ubc.ok.ovilab.roadmap
         {
             if (earthManager.EarthTrackingState == TrackingState.Tracking)
             {
-                // FIXME: This necessary?
+                if (!checkMinimums)
+                {
+                    return true;
+                }
                 /// Have we met the minimums?
                 return earthManager.CameraGeospatialPose.OrientationYawAccuracy <= minimumOrientationAccuracy &&
                     earthManager.CameraGeospatialPose.VerticalAccuracy <= minimumVerticalAccuracy &&
@@ -175,7 +179,7 @@ namespace ubc.ok.ovilab.roadmap
 
                 if (initTime < 0)
                 {
-                    DebugMessages.Instance.LogToDebugText($"Enabling geo spatial  {initTime}");
+                    DebugMessages.Instance.LogToDebugText($"Enabling geo spatial");
                     enablingGeospatial = false;
                 }
                 else
@@ -192,7 +196,8 @@ namespace ubc.ok.ovilab.roadmap
                 DebugMessages.Instance.LogToDebugText($"Earth state not enabled  {earthState}");
                 if (earthState != EarthState.ErrorEarthNotReady)
                 {
-                    // enabled = false;
+                    DebugMessages.Instance.LogToDebugText($"Disabling app!");
+                    enabled = false;
                 }
                 return;
             }

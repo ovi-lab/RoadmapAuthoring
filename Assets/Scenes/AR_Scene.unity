@@ -3337,6 +3337,7 @@ MonoBehaviour:
   earthManager: {fileID: 1654194067}
   anchorManager: {fileID: 1658798120}
   arCoreExtensions: {fileID: 1654194066}
+  checkMinimums: 0
   minimumHorizontalAccuracy: 10
   minimumOrientationAccuracy: 10
   minimumVerticalAccuracy: 10.5
