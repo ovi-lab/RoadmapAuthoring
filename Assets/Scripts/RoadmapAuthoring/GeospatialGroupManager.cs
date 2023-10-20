@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Google.XR.ARCoreExtensions;
 using UnityEngine;
@@ -11,7 +10,7 @@ namespace ubc.ok.ovilab.roadmap
     /// <summary>
     /// Factory to generate groups.
     /// </summary>
-    public class GeospatialAnchorFactory : GroupAnchorFactory
+    public class GeospatialGroupManager : GroupManager
     {
         [SerializeField] private AREarthManager earthManager;
         [SerializeField] private ARAnchorManager anchorManager;
@@ -32,91 +31,38 @@ namespace ubc.ok.ovilab.roadmap
         /// <summary>
         /// Initializes a new instance of PlaceblesGroup and return it."
         /// </summary>
-        public override PlaceablesGroup GetPlaceablesGroup(GroupData groupData, System.Action<PlaceableObject> onClickedCallback)
+        protected override PlaceablesGroup Init(GroupCoordinateData data)
         {
-            GameObject groupObject = null;
+            GameObject groupObject = new GameObject($"Group {data.identifier}");
+            ResolveAnchorOnTerrainPromise promise = anchorManager.ResolveAnchorOnTerrainAsync(data.latitude, data.longitude, data.altitude, data.rotation);
 
-            if (groupData != null)
-            {
-                Quaternion quaternion = Quaternion.AngleAxis((float)groupData.Heading, Vector3.up);
-                Debug.Log($"{quaternion.eulerAngles}, {groupData.Longitude} {groupData.Latitude}  {groupData.Altitude}  {groupData.Heading} 111 "+ quaternion.ToString("F4"));
-                // TODO TEST
-
-                GeospatialPose pose = earthManager.CameraGeospatialPose;
-                // Get forward from the EunRotation then project that on the xz plane. Use that to get rotation around y axis
-                Quaternion quaternion1 = Quaternion.LookRotation(Vector3.ProjectOnPlane(pose.EunRotation * Vector3.forward, Vector3.up), Vector3.up);
-
-                Debug.Log($"{quaternion.eulerAngles}, {pose.Latitude} {pose.Longitude}, {pose.Altitude} 22 " + quaternion1.ToString("F4"));
-                var somepromise2 = anchorManager.ResolveAnchorOnTerrainAsync(pose.Latitude, pose.Longitude, 0, quaternion1);
-                var somepromise3 = anchorManager.ResolveAnchorOnTerrainAsync(pose.Latitude, groupData.Longitude, 0, quaternion1);
-                var somepromise4 = anchorManager.ResolveAnchorOnTerrainAsync(groupData.Latitude, pose.Longitude, 0, quaternion1);
-                var somepromise5 = anchorManager.ResolveAnchorOnTerrainAsync(pose.Latitude, pose.Longitude, 0, quaternion);
-                var somepromise = anchorManager.ResolveAnchorOnTerrainAsync(groupData.Latitude, groupData.Longitude, 0, quaternion1);
-
-                StartCoroutine(CheckTerrainPromise(somepromise, "groupdata"));
-                StartCoroutine(CheckTerrainPromise(somepromise2, "pose data"));
-                StartCoroutine(CheckTerrainPromise(somepromise3, "pose + g lon"));
-                StartCoroutine(CheckTerrainPromise(somepromise4, "pose + g lat"));
-                StartCoroutine(CheckTerrainPromise(somepromise5, "pose + g quat"));
-
-                // TODO TESTEND
-                groupObject = anchorManager.ResolveAnchorOnTerrain(groupData.Latitude, groupData.Longitude, 0, quaternion)?.gameObject;
-            }
-            else
-            {
-                GeospatialPose pose = earthManager.CameraGeospatialPose;
-                // Get forward from the EunRotation then project that on the xz plane. Use that to get rotation around y axis
-                Quaternion quaternion = Quaternion.LookRotation(Vector3.ProjectOnPlane(pose.EunRotation * Vector3.forward, Vector3.up), Vector3.up);
-                Debug.Log($"{quaternion.eulerAngles}, {pose.Latitude} {pose.Longitude}, {pose.Altitude} 22");
-                groupObject = anchorManager.ResolveAnchorOnTerrain(pose.Latitude, pose.Longitude, 0, quaternion)?.gameObject;
-            }
-
-            if (groupObject == null)
-            {
-                // TODO
-                // throw new Exception("Failed to initilize group");
-            }
+            StartCoroutine(CheckTerrainPromise(promise, groupObject.transform));
 
             PlaceablesGroup placeablesGroup = groupObject.AddComponent<PlaceablesGroup>();
-            placeablesGroup.Init(groupData, onClickedCallback);
+            placeablesGroup.Init(data.identifier);
             return placeablesGroup;
         }
 
-        // TODO TEST
-        private IEnumerator CheckTerrainPromise(ResolveAnchorOnTerrainPromise promise, string msg)
+        /// <summary>
+        /// Coroutine to wait and setup the anchor.
+        /// </summary>
+        private IEnumerator CheckTerrainPromise(ResolveAnchorOnTerrainPromise promise, Transform child)
         {
             yield return promise;
 
-            var result = promise.Result;
-            switch (result.TerrainAnchorState)
-            {
-                case TerrainAnchorState.Success:
-                    DebugMessages.Instance.LogToDebugText($"Anchor has successfully resolved - {msg}");
-                    break;
-                case TerrainAnchorState.ErrorUnsupportedLocation:
-                    DebugMessages.Instance.LogToDebugText($"The requested anchor is in a location that isn't supported by the Geospatial API. - {msg}");
-                    break;
-                case TerrainAnchorState.ErrorNotAuthorized:
-                    DebugMessages.Instance.LogToDebugText($"An error occurred while authorizing your app with the ARCore API. See - {msg}");
-                    // https://developers.google.com/ar/reference/unity-arf/namespace/Google/XR/ARCoreExtensions#terrainanchorstate_errornotauthorized
-                    // for troubleshooting steps.
-                    break;
-                case TerrainAnchorState.ErrorInternal:
-                    DebugMessages.Instance.LogToDebugText($"The Terrain anchor could not be resolved due to an internal error. - {msg}");
-                    break;
-                default:
-                    break;
-            }
+            ResolveAnchorOnTerrainResult result = promise.Result;
             if (result.TerrainAnchorState == TerrainAnchorState.Success &&
                 result.Anchor != null)
             {
-                // resolving anchor succeeded
-                Debug.Log($"YAYYYYY");
+                child.parent = result.Anchor.transform;
+                child.localPosition = Vector3.zero;
+                child.localRotation = Quaternion.identity;
+                child.localScale = Vector3.one;
             }
             else
             {
                 // resolving anchor failed
-                Debug.Log($"BOOOOOOO");
+                Debug.LogError($"FAILED");
             }
 
             yield break;
@@ -185,7 +131,10 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         // Unity method
-        protected override void Update()
+        private void Start() { }
+
+        // Unity method
+        private void Update()
         {
             if (!CheckCameraPermission())
             {
@@ -278,7 +227,10 @@ namespace ubc.ok.ovilab.roadmap
             if (trackingIsValid)
             {
                 // Execute all actions that have been queued.
-                RunAllActions();
+                foreach(GroupCoordinateData data in sceneGroupsData.groups)
+                {
+                    groups.Add(data.identifier, Init(data));
+                }
             }
         }
     }

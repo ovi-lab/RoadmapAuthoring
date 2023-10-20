@@ -202,18 +202,18 @@ namespace ubc.ok.ovilab.roadmap
                     }
                 });
 
-                // FIXME: This if check is not needed?
-                /// if the platforms are different transfrom data
-                if (remoteData.lastWrittenPlatform != localData.lastWrittenPlatform)
-                {
-                    foreach (var _group in groupData)
-                    {
-                        if (groupStates[_group.Key] == 1)
-                        {
-                            PlatformManager.Instance.ConvertGroupData(_group.Value, System.Enum.Parse<Platform>(localData.lastWrittenPlatform));
-                        }
-                    }
-                }
+                // // FIXME: This if check is not needed?
+                // /// if the platforms are different transfrom data
+                // if (remoteData.lastWrittenPlatform != localData.lastWrittenPlatform)
+                // {
+                //     foreach (var _group in groupData)
+                //     {
+                //         if (groupStates[_group.Key] == 1)
+                //         {
+                //             PlatformManager.Instance.ConvertGroupData(_group.Value, System.Enum.Parse<Platform>(localData.lastWrittenPlatform));
+                //         }
+                //     }
+                // }
 
                 /// localData has the current platform set as LastWrittenPlatform
                 LocalStorageData result = new LocalStorageData(groupData.Values.ToList(), localData.lastWrittenPlatform);
@@ -242,15 +242,15 @@ namespace ubc.ok.ovilab.roadmap
             ProcessRemoteStorageData((remoteData) =>
             {
                 LocalStorageData data = remoteData.GetData();
-                Platform lastWrittenPlatform = System.Enum.Parse<Platform>(data.lastWrittenPlatform);
-                // FIXME: This if check is not needed?
-                if (lastWrittenPlatform != PlatformManager.Instance.currentPlatform)
-                {
-                    foreach (var _group in data.groups)
-                    {
-                        PlatformManager.Instance.ConvertGroupData(_group, lastWrittenPlatform);
-                    }
-                }
+                // Platform lastWrittenPlatform = System.Enum.Parse<Platform>(data.lastWrittenPlatform);
+                // // FIXME: This if check is not needed?
+                // if (lastWrittenPlatform != PlatformManager.Instance.currentPlatform)
+                // {
+                //     foreach (var _group in data.groups)
+                //     {
+                //         PlatformManager.Instance.ConvertGroupData(_group, lastWrittenPlatform);
+                //     }
+                // }
 
                 PlaceablesManager.Instance.ClearData();
                 PlaceablesManager.Instance.LoadFromLocalStorageData(data);

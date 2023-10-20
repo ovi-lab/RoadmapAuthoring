@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Google.XR.ARCoreExtensions;
 
 namespace ubc.ok.ovilab.roadmap
 {
@@ -13,8 +12,7 @@ namespace ubc.ok.ovilab.roadmap
     /// </summary>
     public class PlaceablesGroup : MonoBehaviour
     {
-        private static List<string> usedGroupIds = new List<string>();
-        private List<PlaceableObject> placeableObjects;
+        public List<PlaceableObject> placeableObjects { get ; private set;}
         private string identifier;
 
         /// <summary>
@@ -26,56 +24,18 @@ namespace ubc.ok.ovilab.roadmap
         /// PlaceableObject is clicked. Used when `data` is not null
         /// and populating placeable objects from the data.</param>
         /// </summary>
-        public void Init(GroupData data, System.Action<PlaceableObject> onClickedCallback)
+        public void Init(string identifier)
         {
-            placeableObjects = new List<PlaceableObject>();
-
-            if (data != null)
-            {
-                foreach(PlaceableObjectData objectData in data.PlaceableDataList)
-                {
-                    PlaceableObject placeableObject = AddPlaceableObject(objectData.prefabIdentifier, objectData.identifier, onClickedCallback,
-                                                                         objectData.localPosition, objectData.localRotation, objectData.localScale, objectData.lastUpdate);
-                }
-                identifier = data.identifier;
-            }
-            else
-            {
-                do
-                {
-                    identifier = System.Guid.NewGuid().ToString();
-                } while (usedGroupIds.Contains(identifier));
-            }
-
-            usedGroupIds.Add(identifier);
+            this.identifier = identifier;
+            this.placeableObjects = new List<PlaceableObject>();
         }
 
         /// <summary>
-        /// Initilize and add a PlaceableObject to this group.
+        /// Add given placeableObject to this group.
         /// </summary>
-        public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, System.Action<PlaceableObject> onClickedCallback)
+        public void AddPlaceable(PlaceableObject placeableObject)
         {
-            Transform t = Camera.main.transform;
-            return AddPlaceableObject(prefabIdentifier, identifier, onClickedCallback, transform.InverseTransformPoint(t.position + t.forward.normalized * 1.5f), Quaternion.identity, Vector3.one);
-        }
-
-        /// <summary>
-        /// Initilize and add a PlaceableObject to this group.
-        /// See `PlaceableObject.SetupPlacebleObject for details on
-        /// `prefabIdentifier`, `identifier` and `lastUpdate`.
-        /// See `PlaceableObject.SetLocalPose` for information on
-        /// `position` and `rotation`.
-        /// `onClickedCallback` is a function that subscribes to the
-        /// `PlaceableObject.onClickedCallback` event.
-        /// </summary>
-        public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, System.Action<PlaceableObject> onClickedCallback, Vector3 position, Quaternion rotation, Vector3 scale, long lastUpdate=-1)
-        {
-            PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(prefabIdentifier, identifier, this, lastUpdate);
-            placeableObject.onClickedCallback += onClickedCallback;
-            placeableObject.SetLocalPose(position, rotation, scale);
-            placeableObject.SetObjectManipulationEnabled(PlaceablesManager.Instance.Modifyable);
             placeableObjects.Add(placeableObject);
-            return placeableObject;
         }
 
         /// <summary>
@@ -87,25 +47,14 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         /// <summary>
-        /// Set the modifiable for placeableObjects in this group.
-        /// </summary>
-        public void SetPlaceablesModifiable(bool modifyable)
-        {
-            foreach(PlaceableObject p in placeableObjects)
-            {
-                p.SetObjectManipulationEnabled(modifyable);
-            }
-        }
-
-        /// <summary>
         /// Get GroupData representing this group.
         /// </summary>
         public GroupData GetGroupData()
         {
-            Vector3 position = transform.position;
-            // Rotation around -gravity (+y) from north (+z)
-            float headingAngle = Vector3.Angle(Vector3.forward,
-                                               Vector3.ProjectOnPlane(transform.forward, Vector3.up));
+            // Vector3 position = transform.position;
+            // // Rotation around -gravity (+y) from north (+z)
+            // float headingAngle = Vector3.Angle(Vector3.forward,
+            //                                    Vector3.ProjectOnPlane(transform.forward, Vector3.up));
             List<PlaceableObjectData> data = new List<PlaceableObjectData>();
             foreach(PlaceableObject obj in placeableObjects)
             {
@@ -113,11 +62,18 @@ namespace ubc.ok.ovilab.roadmap
             }
 
             return new GroupData(identifier,
-                                 position.z,
-                                 position.x,
-                                 position.y,
-                                 headingAngle,
                                  data);
+        }
+
+        /// <summary>
+        /// Clear all PlaceableObjects
+        /// </summary>
+        public void Clear()
+        {
+            foreach (PlaceableObject obj in placeableObjects)
+            {
+                Destroy(obj.gameObject);
+            }
         }
     }
 }

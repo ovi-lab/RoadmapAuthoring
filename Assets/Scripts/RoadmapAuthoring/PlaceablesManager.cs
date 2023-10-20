@@ -1,12 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
-using System.Linq;
-using UnityEngine.UI;
-using UnityEngine.Events;
-using UnityEngine.XR.ARFoundation;
-using TMPro;
-using System;
 
 namespace ubc.ok.ovilab.roadmap
 {
@@ -19,11 +11,9 @@ namespace ubc.ok.ovilab.roadmap
     public class PlaceablesManager : Singleton<PlaceablesManager>
     {
         [SerializeField] public RoadmapApplicationConfig applicationConfig;
-        [SerializeField] private GroupAnchorFactory groupAnchorFactory;
+        [SerializeField] private GroupManager groupManager;
         
         private const string _playerPrefsStorageKey = "RoadMapStorage";
-        private List<PlaceablesGroup> groups = new List<PlaceablesGroup>();
-        private PlaceablesGroup currentGroup;
         private bool modifyable = false;
         private bool deleting = false;
         private PopupManager popupManager;
@@ -99,7 +89,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public LocalStorageData GetLocalStorageData()
         {
-            return new LocalStorageData(groups.Select(g => g.GetGroupData()).ToList(), PlatformManager.Instance.currentPlatform.ToString());
+            return new LocalStorageData(groupManager.GetPlaceablesGroupData(), PlatformManager.Instance.currentPlatform.ToString());
         }
 
         /// <summary>
@@ -107,8 +97,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public void ClearData()
         {
-            DestroyAll();
-            groups.Clear();
+            groupManager.ClearAllPlaceableObjects();
             PlayerPrefs.DeleteAll();
             PlayerPrefs.SetString("BuildKey", applicationConfig.buildKey);
             PlayerPrefs.Save();
@@ -142,30 +131,16 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         /// <summary>
-        /// Destroy all groups.
-        /// </summary>
-        private void DestroyAll()
-        {
-            foreach(PlaceablesGroup group in groups)
-            {
-                Destroy(group.gameObject);
-            }
-        }
-
-        /// <summary>
-        /// Setup new group. Would set this group as the current group.
+        /// Setup new group.
         /// The groupData passed to this also can be null (See PlaceablesGroup.Init for more information)
         /// </summary>
         private void SetupGroup(GroupData groupData)
         {
-            groupAnchorFactory.AddActionToRunWhenReady(() =>
+            PlaceablesGroup thisGroup = groupManager.GetPlaceablesGroup(groupData.identifier);
+            foreach(PlaceableObjectData data in groupData.PlaceableDataList)
             {
-                PlaceablesGroup placeablesGroup = groupAnchorFactory.GetPlaceablesGroup(groupData, OnPlaceableClicked);
-                groups.Add(placeablesGroup);
-
-                // TODO: group selection
-                currentGroup = placeablesGroup;
-            });
+                AddPlaceableObject(data.prefabIdentifier, data.identifier, thisGroup, OnPlaceableClicked, data.localPosition, data.localRotation, data.localScale, data.lastUpdate);
+            }
         }
 
         /// <summary>
@@ -177,27 +152,51 @@ namespace ubc.ok.ovilab.roadmap
         }
         #endregion
 
-        #region UI related functions
-        /// <summary>
-        /// Empty callback function.
-        /// </summary>
-        public void EmptyCallback() { }
-
+        #region Create & manage placeables
         /// <summary>
         /// Callback for the add UI button when adding new objects from the List Menu.
         /// </summary>
         public void SpawnObject(string identifier)
         {
-            if (currentGroup == null)
-            {
-                SetupGroup(null);
-                groupAnchorFactory.AddActionToRunWhenReady(() => currentGroup.AddPlaceableObject(identifier, "", OnPlaceableClicked));
-            }
-            else
-            {
-                currentGroup.AddPlaceableObject(identifier, "", OnPlaceableClicked);
-            }
+            AddPlaceableObject(identifier, "", OnPlaceableClicked);
         }
+
+        /// <summary>
+        /// Initilize and add a PlaceableObject to this group.
+        /// </summary>
+        public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, System.Action<PlaceableObject> onClickedCallback)
+        {
+            Transform t = Camera.main.transform;
+            Vector3 newPosition = transform.InverseTransformPoint(t.position + t.forward.normalized * 1.5f);
+            PlaceablesGroup placeablesGroup = groupManager.GetClosestGroup(newPosition);
+            return AddPlaceableObject(prefabIdentifier, identifier, placeablesGroup, onClickedCallback, newPosition, Quaternion.identity, Vector3.one);
+        }
+
+        /// <summary>
+        /// Initilize and add a PlaceableObject to this group.
+        /// See `PlaceableObject.SetupPlacebleObject for details on
+        /// `prefabIdentifier`, `identifier` and `lastUpdate`.
+        /// See `PlaceableObject.SetLocalPose` for information on
+        /// `position` and `rotation`.
+        /// `onClickedCallback` is a function that subscribes to the
+        /// `PlaceableObject.onClickedCallback` event.
+        /// </summary>
+        public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, PlaceablesGroup placeablesGroup, System.Action<PlaceableObject> onClickedCallback, Vector3 position, Quaternion rotation, Vector3 scale, long lastUpdate=-1)
+        {
+            PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(prefabIdentifier, identifier, placeablesGroup, lastUpdate);
+            placeableObject.onClickedCallback += onClickedCallback;
+            placeableObject.SetLocalPose(position, rotation, scale);
+            placeableObject.SetObjectManipulationEnabled(modifyable);
+            return placeableObject;
+        }
+
+        #endregion
+
+        #region UI related functions
+        /// <summary>
+        /// Empty callback function.
+        /// </summary>
+        public void EmptyCallback() { }
 
         /// <summary>
         /// Callback for the delete button.
@@ -244,10 +243,7 @@ namespace ubc.ok.ovilab.roadmap
         public void SetPlaceablesModifiable(bool modifyable)
         {
             this.modifyable = modifyable;
-            foreach(PlaceablesGroup g in groups)
-            {
-                g.SetPlaceablesModifiable(modifyable);
-            }
+            groupManager.GetAllPlaceableObjects().ForEach(obj => { obj.SetObjectManipulationEnabled(modifyable); });
 
             // NOTE: Any popup would have to gracefully get dismissed
             popupManager.DismissPopup();

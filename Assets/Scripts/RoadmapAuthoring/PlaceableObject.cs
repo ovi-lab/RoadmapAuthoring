@@ -37,6 +37,7 @@ namespace ubc.ok.ovilab.roadmap
             }
             this.lastUpdate = lastUpdate;
             this.placeablesGroup = placeablesGroup;
+            placeablesGroup.AddPlaceable(this);
             ObjectManipulator objectManipulator = GetComponent<ObjectManipulator>();
             objectManipulator.OnClicked.AddListener(OnClickCallback);
             objectManipulator.selectExited.AddListener(UpdateLastUpdate);
