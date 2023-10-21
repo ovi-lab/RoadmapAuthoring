@@ -216,7 +216,7 @@ namespace ubc.ok.ovilab.roadmap
                 // }
 
                 /// localData has the current platform set as LastWrittenPlatform
-                LocalStorageData result = new LocalStorageData(groupData.Values.ToList(), localData.lastWrittenPlatform);
+                LocalStorageData result = new LocalStorageData(groupData.Values.ToList(), localData.lastWrittenPlatform, localData.buildKey);
 
                 /// Clear and write local data
                 PlaceablesManager.Instance.ClearData();

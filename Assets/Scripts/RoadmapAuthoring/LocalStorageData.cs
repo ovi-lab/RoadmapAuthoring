@@ -7,15 +7,18 @@ namespace ubc.ok.ovilab.roadmap
     {
         public List<GroupData> groups;
         public string lastWrittenPlatform;
-        public LocalStorageData(List<GroupData> groups, string lastWrittenPlatform)
+        public string buildKey;
+
+        public LocalStorageData(List<GroupData> groups, string lastWrittenPlatform, string buildKey)
         {
             this.groups = groups;
             this.lastWrittenPlatform = lastWrittenPlatform;
+            this.buildKey = buildKey;
         }
 
         public override string ToString()
         {
-            return $"plaform: {lastWrittenPlatform}\ngroups[{groups.Count}]:\n " + string.Join("\n ", groups);
+            return $"plaform: {lastWrittenPlatform} with {buildKey}\ngroups[{groups.Count}]:\n " + string.Join("\n ", groups);
         }
     }
 }

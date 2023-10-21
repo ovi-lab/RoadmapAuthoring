@@ -89,7 +89,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public LocalStorageData GetLocalStorageData()
         {
-            return new LocalStorageData(groupManager.GetPlaceablesGroupData(), PlatformManager.Instance.currentPlatform.ToString());
+            return new LocalStorageData(groupManager.GetPlaceablesGroupData(), PlatformManager.Instance.currentPlatform.ToString(), applicationConfig.buildKey);
         }
 
         /// <summary>
