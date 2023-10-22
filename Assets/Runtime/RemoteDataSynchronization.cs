@@ -14,6 +14,7 @@ namespace ubc.ok.ovilab.roadmap
         private const string DB_SCENE_DATA = "scene_data";
         private const string DB_SCENES = "scenes";
         private const string DB_GROUPS = "groups";
+        private const string DB_BRANCH = "branch";
         private const string _playerPrefsStorageKey = "RoadMapStorageSyncLastPushed";
 
         private string lastPushedSceneDataId;
@@ -47,7 +48,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         private string SceneID()
         {
-            return $"{PlaceablesManager.Instance.applicationConfig.buildKey}";
+            return $"{GroupID()}_{PlaceablesManager.Instance.applicationConfig.buildKey}";
         }
 
         /// <summary>
@@ -60,6 +61,14 @@ namespace ubc.ok.ovilab.roadmap
                 throw new UnityException($"GroupID not set");
             }
             return $"{PlaceablesManager.Instance.applicationConfig.groupID}";
+        }
+
+        /// <summary>
+        /// Get the active scene ID to use
+        /// </summary>
+        private string BranchName()
+        {
+            return $"{PlaceablesManager.Instance.BranchName}";
         }
 
         /// <summary>
@@ -93,7 +102,7 @@ namespace ubc.ok.ovilab.roadmap
         {
             CheckSceneInScenes(() =>
             {
-                RemoteStorageData sceneData = new RemoteStorageData(System.DateTime.Now.Ticks, data);
+                RemoteStorageData sceneData = new RemoteStorageData(System.DateTime.Now.Ticks, data, GroupID(), BranchName());
 
                 ProcessRequest($"/{DB_SCENE_DATA}", HTTPMethod.POST, (nameString) =>
                 {
@@ -102,7 +111,10 @@ namespace ubc.ok.ovilab.roadmap
                     {
                         ProcessRequest($"/{DB_SCENES}/{SceneID()}/{DB_SCENE_DATA}/{name}", HTTPMethod.PUT, (_) =>
                         {
-                            LastPushedSceneDataId = name; // Set only if everything went smooth!
+                            ProcessRequest($"/{DB_BRANCH}/{GroupID()}/{BranchName()}", HTTPMethod.PUT, (_) =>
+                            {
+                                LastPushedSceneDataId = name; // Set only if everything went smooth!
+                            }, name);
                         }, JsonConvert.SerializeObject(sceneData.commit_time));
                     }, JsonConvert.SerializeObject(sceneData, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
 
@@ -146,15 +158,6 @@ namespace ubc.ok.ovilab.roadmap
             ProcessRemoteStorageData((remoteData) =>
             {
                 StorageData data = remoteData.GetData();
-                // Platform lastWrittenPlatform = System.Enum.Parse<Platform>(data.lastWrittenPlatform);
-                // // FIXME: This if check is not needed?
-                // if (lastWrittenPlatform != PlatformManager.Instance.currentPlatform)
-                // {
-                //     foreach (var _group in data.groups)
-                //     {
-                //         PlatformManager.Instance.ConvertGroupData(_group, lastWrittenPlatform);
-                //     }
-                // }
 
                 PlaceablesManager.Instance.ClearData();
                 PlaceablesManager.Instance.LoadFromStorageData(data);
@@ -166,11 +169,9 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public void ProcessRemoteStorageData(System.Action<RemoteStorageData> callback)
         {
-            ProcessRequest($"/{DB_SCENES}/{SceneID()}/{DB_SCENE_DATA}", HTTPMethod.GET, (idStrings) =>
+            ProcessRequest($"/{DB_BRANCH}/{GroupID()}/{BranchName()}", HTTPMethod.GET, (idString) =>
             {
-                Dictionary<string, long> sceneData = JsonConvert.DeserializeObject<Dictionary<string, long>>(idStrings);
-                string sceneDataId = sceneData.OrderByDescending(kvp => kvp.Value).First().Key;
-                ProcessRequest($"/{DB_SCENE_DATA}/{sceneDataId}", HTTPMethod.GET, (dataString) =>
+                ProcessRequest($"/{DB_SCENE_DATA}/{idString}", HTTPMethod.GET, (dataString) =>
                 {
                     RemoteStorageData remoteData = JsonUtility.FromJson<RemoteStorageData>(dataString);
                     callback(remoteData);
@@ -289,22 +290,30 @@ namespace ubc.ok.ovilab.roadmap
         public string platform;
         public StorageData data;// StorageData
         public string dataHash;
+        public string groupID;
+        public string branchName;
 
-        public RemoteStorageData(long commit_time, string platform, StorageData data)
+        public RemoteStorageData(long commit_time, string platform, StorageData data, string groupID, string branchName)
         {
             this.commit_time = commit_time;
             this.data = data;
             this.platform = platform;
+            this.groupID = groupID;
+            this.branchName = branchName;
+            FillFields();
         }
 
-        public RemoteStorageData(long commit_time, StorageData data)
+        public RemoteStorageData(long commit_time, StorageData data, string groupID, string branchName)
         {
             this.commit_time = commit_time;
             this.data = data;
             this.platform = data.lastWrittenPlatform;
+            this.groupID = groupID;
+            this.branchName = branchName;
+            FillFields();
         }
 
-        public void ComputeHash()
+        public void FillFields()
         {
             Hash128 hash = new Hash128();
             HashUtilities.ComputeHash128(ref this.data, ref hash);

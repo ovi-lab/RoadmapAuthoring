@@ -23,7 +23,9 @@
           {
               "commit_time": "timestamp",
               "platform": "", #oculus/arcore
-              "hash": "", #scene hash
+              "dataHash": "", #scene hash
+              "groupID": "$group_id",
+              "branchName": "$branch_name",
               # data from the app
               "data": {
               }
@@ -50,7 +52,7 @@
       {
           "$group_id":
           {
-              "$branch_id" : "$scene_id",
+              "$branch_id" : "$scene_data_id",
               ...
           }
       }

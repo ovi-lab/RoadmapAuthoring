@@ -43,6 +43,10 @@ namespace ubc.ok.ovilab.roadmap
             {
                 BranchName = PlayerPrefs.GetString(_playerPrefsBranchNameKey);
             }
+            else
+            {
+                BranchName = $"tempMaster_{System.DateTime.Now}";
+            }
             LoadAll();
         }
 
