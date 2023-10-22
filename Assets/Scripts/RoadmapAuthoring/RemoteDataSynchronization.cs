@@ -90,7 +90,7 @@ namespace ubc.ok.ovilab.roadmap
         /// <summary>
         /// Save the scene data to the remote.
         /// </summary>
-        public void SaveSceneData(LocalStorageData data)
+        public void SaveSceneData(StorageData data)
         {
             CheckSceneInScenes(() =>
             {
@@ -116,16 +116,16 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public void SyncWithRemote()
         {
-            LocalStorageData localData = PlaceablesManager.Instance.GetLocalStorageData();
+            StorageData localData = PlaceablesManager.Instance.GetStorageData();
 
             ProcessRemoteStorageData((remoteDataStorage) =>
             {
                 /// localData has the current platform set as LastWrittenPlatform
-                LocalStorageData result = LocalStorageData.MergeData(remoteDataStorage.GetData(), localData, localData.lastWrittenPlatform, localData.buildKey);
+                StorageData result = StorageData.MergeData(remoteDataStorage.GetData(), localData, localData.lastWrittenPlatform, localData.buildKey);
 
                 /// Clear and write local data
                 PlaceablesManager.Instance.ClearData();
-                PlaceablesManager.Instance.LoadFromLocalStorageData(result);
+                PlaceablesManager.Instance.LoadFromStorageData(result);
                 /// Write remote data
                 SaveSceneData(result);
             });
@@ -136,7 +136,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public void OverwriteRemote()
         {
-            SaveSceneData(PlaceablesManager.Instance.GetLocalStorageData());
+            SaveSceneData(PlaceablesManager.Instance.GetStorageData());
         }
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace ubc.ok.ovilab.roadmap
         {
             ProcessRemoteStorageData((remoteData) =>
             {
-                LocalStorageData data = remoteData.GetData();
+                StorageData data = remoteData.GetData();
                 // Platform lastWrittenPlatform = System.Enum.Parse<Platform>(data.lastWrittenPlatform);
                 // // FIXME: This if check is not needed?
                 // if (lastWrittenPlatform != PlatformManager.Instance.currentPlatform)
@@ -158,7 +158,7 @@ namespace ubc.ok.ovilab.roadmap
                 // }
 
                 PlaceablesManager.Instance.ClearData();
-                PlaceablesManager.Instance.LoadFromLocalStorageData(data);
+                PlaceablesManager.Instance.LoadFromStorageData(data);
             });
         }
 
@@ -271,12 +271,12 @@ namespace ubc.ok.ovilab.roadmap
         {
             popupManager.OpenDialogWithMessage("Synchronize remote and local?", "Yes", () =>
             {
-                LocalStorageData localDataBeforeSync = PlaceablesManager.Instance.GetLocalStorageData();
+                StorageData localDataBeforeSync = PlaceablesManager.Instance.GetStorageData();
                 SyncWithRemote();
                 popupManager.OpenDialogWithMessage("Sync was a success?", "Yes", () => { }, "No(revert)", () =>
                 {
                     RemoveLastRemoteStorageData();
-                    PlaceablesManager.Instance.LoadFromLocalStorageData(localDataBeforeSync);
+                    PlaceablesManager.Instance.LoadFromStorageData(localDataBeforeSync);
                 }, () => { });
             }, () => { });
         }
@@ -288,23 +288,23 @@ namespace ubc.ok.ovilab.roadmap
     {
         public long commit_time;
         public string platform;
-        public LocalStorageData data;// LocalStorageData
+        public StorageData data;// StorageData
 
-        public RemoteStorageData(long commit_time, string platform, LocalStorageData data)
+        public RemoteStorageData(long commit_time, string platform, StorageData data)
         {
             this.commit_time = commit_time;
             this.data = data;
             this.platform = platform;
         }
 
-        public RemoteStorageData(long commit_time, LocalStorageData data)
+        public RemoteStorageData(long commit_time, StorageData data)
         {
             this.commit_time = commit_time;
             this.data = data;
             this.platform = data.lastWrittenPlatform;
         }
 
-        public LocalStorageData GetData()
+        public StorageData GetData()
         {
             return data;
         }

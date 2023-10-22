@@ -75,7 +75,7 @@ namespace ubc.ok.ovilab.roadmap
             //     return;
             // }
 
-            LocalStorageData storageData = GetLocalStorageData();
+            StorageData storageData = GetStorageData();
             string jsonString = JsonUtility.ToJson(storageData);
             PlayerPrefs.SetString(_playerPrefsStorageKey, jsonString);
 
@@ -85,11 +85,11 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         /// <summary>
-        /// Returns instance of LocalStorageData representing current state of applications.
+        /// Returns instance of StorageData representing current state of applications.
         /// </summary>
-        public LocalStorageData GetLocalStorageData()
+        public StorageData GetStorageData()
         {
-            return new LocalStorageData(groupManager.GetPlaceablesGroupData(), PlatformManager.Instance.currentPlatform.ToString(), applicationConfig.buildKey);
+            return new StorageData(groupManager.GetPlaceablesGroupData(), PlatformManager.Instance.currentPlatform.ToString(), applicationConfig.buildKey);
         }
 
         /// <summary>
@@ -116,15 +116,15 @@ namespace ubc.ok.ovilab.roadmap
                 return;
             }
 
-            LocalStorageData storageData = JsonUtility.FromJson<LocalStorageData>(PlayerPrefs.GetString(_playerPrefsStorageKey));
+            StorageData storageData = JsonUtility.FromJson<StorageData>(PlayerPrefs.GetString(_playerPrefsStorageKey));
 
-            LoadFromLocalStorageData(storageData);
+            LoadFromStorageData(storageData);
         }
 
         /// <summary>
-        /// Populate application state from a `LocalStorageData`
+        /// Populate application state from a `StorageData`
         /// </summary>
-        public void LoadFromLocalStorageData(LocalStorageData storageData)
+        public void LoadFromStorageData(StorageData storageData)
         {
             Debug.Log($"Loading data\n{storageData}");
             storageData.groups.ForEach(groupData => SetupGroup(groupData));

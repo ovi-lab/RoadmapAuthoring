@@ -1,17 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace ubc.ok.ovilab.roadmap
 {
     [System.Serializable]
-    public class LocalStorageData
+    public class StorageData
     {
         public List<GroupData> groups;
         public string lastWrittenPlatform;
         public string buildKey;
 
-        public LocalStorageData(List<GroupData> groups, string lastWrittenPlatform, string buildKey)
+        public StorageData(List<GroupData> groups, string lastWrittenPlatform, string buildKey)
         {
             this.groups = groups;
             this.lastWrittenPlatform = lastWrittenPlatform;
@@ -24,11 +23,11 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         /// <summary>
-        /// Merge the data from two LocalStorageData items. The
+        /// Merge the data from two StorageData items. The
         /// lastWrittenPlatform and buildKey will set as the values in
-        /// the returned merged LocalStorageData.
+        /// the returned merged StorageData.
         /// </summary>
-        public static LocalStorageData MergeData(LocalStorageData dataA, LocalStorageData dataB, string lastWrittenPlatform, string buildKey)
+        public static StorageData MergeData(StorageData dataA, StorageData dataB, string lastWrittenPlatform, string buildKey)
         {
             Dictionary<string, GroupData> dataADict = dataA.groups.ToDictionary(item => item.identifier);
             Dictionary<string, GroupData> dataBDict = dataB.groups.ToDictionary(item => item.identifier);
@@ -110,7 +109,7 @@ namespace ubc.ok.ovilab.roadmap
                 }
             });
 
-            return new LocalStorageData(groupData.Values.ToList(), lastWrittenPlatform, buildKey);
+            return new StorageData(groupData.Values.ToList(), lastWrittenPlatform, buildKey);
         }
     }
 }
