@@ -4,22 +4,24 @@ using System.Linq;
 namespace ubc.ok.ovilab.roadmap
 {
     [System.Serializable]
-    public class StorageData
+    public struct StorageData
     {
         public List<GroupData> groups;
         public string lastWrittenPlatform;
         public string buildKey;
+        public string branchName;
 
-        public StorageData(List<GroupData> groups, string lastWrittenPlatform, string buildKey)
+        public StorageData(List<GroupData> groups, string lastWrittenPlatform, string buildKey, string branchName)
         {
             this.groups = groups;
             this.lastWrittenPlatform = lastWrittenPlatform;
             this.buildKey = buildKey;
+            this.branchName = branchName;
         }
 
         public override string ToString()
         {
-            return $"plaform: {lastWrittenPlatform} with {buildKey}\ngroups[{groups.Count}]:\n " + string.Join("\n ", groups);
+            return $"plaform: {lastWrittenPlatform}/{branchName} with {buildKey}\ngroups[{groups.Count}]:\n " + string.Join("\n ", groups);
         }
 
         /// <summary>
@@ -27,7 +29,7 @@ namespace ubc.ok.ovilab.roadmap
         /// lastWrittenPlatform and buildKey will set as the values in
         /// the returned merged StorageData.
         /// </summary>
-        public static StorageData MergeData(StorageData dataA, StorageData dataB, string lastWrittenPlatform, string buildKey)
+        public static StorageData MergeData(StorageData dataA, StorageData dataB, string lastWrittenPlatform, string buildKey, string branchName)
         {
             Dictionary<string, GroupData> dataADict = dataA.groups.ToDictionary(item => item.identifier);
             Dictionary<string, GroupData> dataBDict = dataB.groups.ToDictionary(item => item.identifier);
@@ -109,7 +111,7 @@ namespace ubc.ok.ovilab.roadmap
                 }
             });
 
-            return new StorageData(groupData.Values.ToList(), lastWrittenPlatform, buildKey);
+            return new StorageData(groupData.Values.ToList(), lastWrittenPlatform, buildKey, branchName);
         }
     }
 }

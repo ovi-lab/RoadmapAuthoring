@@ -14,9 +14,12 @@ namespace ubc.ok.ovilab.roadmap
         [SerializeField] private GroupManager groupManager;
         
         private const string _playerPrefsStorageKey = "RoadMapStorage";
+        private const string _playerPrefsBranchNameKey = "RoadMapBranchName";
         private bool modifyable = false;
         private bool deleting = false;
         private PopupManager popupManager;
+
+        public string BranchName { get; private set; }
 
         public bool Modifyable
         {
@@ -31,9 +34,14 @@ namespace ubc.ok.ovilab.roadmap
         {
             popupManager = GetComponent<PopupManager>();
             modifyable = false;
+            // TODO: remove the dependency on build key
             if (!(PlayerPrefs.HasKey("BuildKey") && PlayerPrefs.GetString("BuildKey") == applicationConfig.buildKey))
             {
                 ClearData();
+            }
+            if (PlayerPrefs.HasKey(_playerPrefsBranchNameKey))
+            {
+                BranchName = PlayerPrefs.GetString(_playerPrefsBranchNameKey);
             }
             LoadAll();
         }
@@ -78,6 +86,7 @@ namespace ubc.ok.ovilab.roadmap
             StorageData storageData = GetStorageData();
             string jsonString = JsonUtility.ToJson(storageData);
             PlayerPrefs.SetString(_playerPrefsStorageKey, jsonString);
+            PlayerPrefs.SetString(_playerPrefsBranchNameKey, BranchName);
 
             System.IO.File.WriteAllText(GetSaveFileLocation(), jsonString);
             PlayerPrefs.Save();
@@ -89,7 +98,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public StorageData GetStorageData()
         {
-            return new StorageData(groupManager.GetPlaceablesGroupData(), PlatformManager.Instance.currentPlatform.ToString(), applicationConfig.buildKey);
+            return new StorageData(groupManager.GetPlaceablesGroupData(), PlatformManager.Instance.currentPlatform.ToString(), applicationConfig.buildKey, BranchName);
         }
 
         /// <summary>
@@ -189,7 +198,6 @@ namespace ubc.ok.ovilab.roadmap
             placeableObject.SetObjectManipulationEnabled(modifyable);
             return placeableObject;
         }
-
         #endregion
 
         #region UI related functions
@@ -250,6 +258,13 @@ namespace ubc.ok.ovilab.roadmap
             deleting = deleting && modifyable;
         }
 
+        /// <summary>
+        /// Get branch name
+        /// </summary>
+        public void SetBranchName(string branchName)
+        {
+            this.BranchName = branchName;
+        }
         #endregion
     }
 }

@@ -23,10 +23,10 @@ namespace ubc.ok.ovilab.roadmap.test
             GroupData b1 = new GroupData("g1", new List<PlaceableObjectData>() { d3 });
             GroupData b2 = new GroupData("g3", new List<PlaceableObjectData>() { d4 });
 
-            StorageData A = new StorageData(new List<GroupData>() { a1, a2 }, "-", "-");
-            StorageData B = new StorageData(new List<GroupData>() { b1, b2 }, "-", "-");
+            StorageData A = new StorageData(new List<GroupData>() { a1, a2 }, "-", "-", "-");
+            StorageData B = new StorageData(new List<GroupData>() { b1, b2 }, "-", "-", "-");
 
-            StorageData result = StorageData.MergeData(A, B, "-", "-");
+            StorageData result = StorageData.MergeData(A, B, "-", "-", "-");
 
             Dictionary<string, GroupData> groupData = result.groups.ToDictionary(g => g.identifier, g => g);
 

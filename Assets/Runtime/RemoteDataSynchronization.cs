@@ -25,7 +25,6 @@ namespace ubc.ok.ovilab.roadmap
                 PlayerPrefs.SetString(_playerPrefsStorageKey, value);
                 lastPushedSceneDataId = value;
             }
-
         }
 
         private PopupManager popupManager;
@@ -121,7 +120,7 @@ namespace ubc.ok.ovilab.roadmap
             ProcessRemoteStorageData((remoteDataStorage) =>
             {
                 /// localData has the current platform set as LastWrittenPlatform
-                StorageData result = StorageData.MergeData(remoteDataStorage.GetData(), localData, localData.lastWrittenPlatform, localData.buildKey);
+                StorageData result = StorageData.MergeData(remoteDataStorage.GetData(), localData, localData.lastWrittenPlatform, localData.buildKey, localData.branchName);
 
                 /// Clear and write local data
                 PlaceablesManager.Instance.ClearData();
@@ -289,6 +288,7 @@ namespace ubc.ok.ovilab.roadmap
         public long commit_time;
         public string platform;
         public StorageData data;// StorageData
+        public string dataHash;
 
         public RemoteStorageData(long commit_time, string platform, StorageData data)
         {
@@ -302,6 +302,13 @@ namespace ubc.ok.ovilab.roadmap
             this.commit_time = commit_time;
             this.data = data;
             this.platform = data.lastWrittenPlatform;
+        }
+
+        public void ComputeHash()
+        {
+            Hash128 hash = new Hash128();
+            HashUtilities.ComputeHash128(ref this.data, ref hash);
+            this.dataHash = hash.ToString();
         }
 
         public StorageData GetData()
