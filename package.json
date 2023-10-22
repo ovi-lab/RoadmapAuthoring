@@ -1,0 +1,23 @@
+{
+  "name": "ubc.ok.ovilab.roadmapauthoring",
+  "version": "0.1.0",
+  "displayName": "RoadmapAuthoring",
+  "description": "The roadmap package to use in projects.",
+  "documentationUrl": "https://github.com/ovi-lab/RoadmapAuthoring/blob/master/README.md",
+  "changelogUrl": "https://github.com/ovi-lab/RoadmapAuthoring/blob/master/CHANGELOG.md",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.render-pipelines.universal": "14.0.8",
+    "com.unity.textmeshpro": "3.0.6",
+    "com.unity.xr.arcore": "5.0.7",
+    "com.unity.xr.oculus": "4.0.0",
+    "com.unity.xr.openxr": "1.7.0",
+    "com.unity.nuget.newtonsoft-json": "3.0.1"
+  },
+  "author": {
+    "name": "ovilab",
+    "email": "amshamoh@student.ubc.ca"
+  },
+  "scopedRegistries": [
+  ]
+}

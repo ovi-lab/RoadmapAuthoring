@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace ubc.ok.ovilab.roadmap
+namespace ubc.ok.ovilab.roadmap.editor
 {
     [CustomEditor(typeof(RemoteDataSynchronization), true)]
     public class RemoteDataSynchronizationEditor :UnityEditor.Editor

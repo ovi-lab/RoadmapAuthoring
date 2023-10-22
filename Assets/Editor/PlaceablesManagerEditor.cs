@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace ubc.ok.ovilab.roadmap
+namespace ubc.ok.ovilab.roadmap.editor
 {
     [CustomEditor(typeof(PlaceablesManager), true)]
     public class PlaceablesManagerEditor :UnityEditor.Editor

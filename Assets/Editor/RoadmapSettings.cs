@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace ubc.ok.ovilab.roadmap
+namespace ubc.ok.ovilab.roadmap.editor
 {
     [FilePath("UserSettings/Roadmap.state", FilePathAttribute.Location.ProjectFolder)]
     public class RoadmapSettings : ScriptableSingleton<RoadmapSettings>

@@ -7,7 +7,7 @@ using UnityEditorInternal;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace ubc.ok.ovilab.roadmap
+namespace ubc.ok.ovilab.roadmap.editor
 {
     [CustomEditor(typeof(RoadmapApplicationConfig), true)]
     [CanEditMultipleObjects]

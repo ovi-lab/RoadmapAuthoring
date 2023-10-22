@@ -12,7 +12,7 @@ using System.Linq;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-namespace ubc.ok.ovilab.roadmap
+namespace ubc.ok.ovilab.roadmap.editor
 {
     public class RoadmapBuildSetupEditor: EditorWindow
     {

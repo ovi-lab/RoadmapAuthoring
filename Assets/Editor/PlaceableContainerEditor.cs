@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace ubc.ok.ovilab.roadmap
+namespace ubc.ok.ovilab.roadmap.editor
 {
     [CustomPropertyDrawer(typeof(PlaceableContainer))]
     public class PlaceableContainerEditor: PropertyDrawer

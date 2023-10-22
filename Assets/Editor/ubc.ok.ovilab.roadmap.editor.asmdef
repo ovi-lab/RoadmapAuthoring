@@ -1,0 +1,19 @@
+{
+    "name": "ubc.ok.ovilab.roadmap.editor",
+    "rootNamespace": "",
+    "references": [
+        "ubc.ok.ovilab.roadmap",
+        "Unity.XR.Management",
+        "Unity.XR.Management.Editor",
+        "Unity.RenderPipelines.Universal.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
