@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Google.XR.ARCoreExtensions;
 using UnityEngine;
 using UnityEngine.Android;
@@ -226,6 +227,7 @@ namespace ubc.ok.ovilab.roadmap
             
             if (trackingIsValid)
             {
+                groups = new Dictionary<string, PlaceablesGroup>();
                 // Execute all actions that have been queued.
                 foreach(GroupCoordinateData data in sceneGroupsData.groups)
                 {

@@ -7,6 +7,7 @@ namespace ubc.ok.ovilab.roadmap
     /// <summary>
     /// Factory to generate groups.
     /// </summary>
+    [DefaultExecutionOrder(-100)]
     public class GroupManager : MonoBehaviour
     {
         [SerializeField] protected SceneGroupsData sceneGroupsData;
@@ -15,6 +16,7 @@ namespace ubc.ok.ovilab.roadmap
 
         private void Start()
         {
+            groups = new Dictionary<string, PlaceablesGroup>();
             foreach(GroupCoordinateData data in sceneGroupsData.groups)
             {
                 groups.Add(data.identifier, Init(data));

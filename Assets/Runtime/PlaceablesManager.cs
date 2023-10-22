@@ -45,7 +45,7 @@ namespace ubc.ok.ovilab.roadmap
             }
             else
             {
-                BranchName = $"tempMaster_{System.DateTime.Now}";
+                BranchName = $"tempMaster_{System.DateTime.Now.Ticks}";
             }
             LoadAll();
         }
