@@ -42,7 +42,11 @@ namespace ubc.ok.ovilab.roadmap
         {
             if (activeDialog != null)
             {
-                activeDialog.Dismiss();
+                try
+                {
+                    activeDialog.Dismiss();
+                }
+                catch { }
                 activeDialog = null;
             }
         }

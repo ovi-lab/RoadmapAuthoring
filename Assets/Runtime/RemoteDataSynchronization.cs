@@ -8,7 +8,7 @@ using System.Collections;
 namespace ubc.ok.ovilab.roadmap
 {
     [RequireComponent(typeof(PopupManager))]
-    public class RemoteDataSynchronization : MonoBehaviour
+    public class RemoteDataSynchronization : Singleton<RemoteDataSynchronization>
     {
         private const string SERVER_URL = "https://roadmap-ubco-default-rtdb.firebaseio.com/";
         private const string DB_SCENE_DATA = "scene_data";
@@ -135,11 +135,20 @@ namespace ubc.ok.ovilab.roadmap
             }
             ProcessRequest($"/{DB_BRANCH}/{GroupID()}/{branchName}", HTTPMethod.GET, (idString) =>
             {
-                ProcessRequest($"/{DB_SCENE_DATA}/{idString}", HTTPMethod.GET, (dataString) =>
+                if (string.IsNullOrEmpty(idString))
                 {
-                    RemoteStorageData remoteData = JsonUtility.FromJson<RemoteStorageData>(dataString);
-                    callback(remoteData);
-                });
+                    StorageData data = PlaceablesManager.Instance.GetStorageData();
+                    SaveSceneData(data);
+                    callback(new RemoteStorageData(System.DateTime.Now.Ticks, data, GroupID(), ActiveBranchName()));
+                }
+                else
+                {
+                    ProcessRequest($"/{DB_SCENE_DATA}/{idString}", HTTPMethod.GET, (dataString) =>
+                    {
+                        RemoteStorageData remoteData = JsonUtility.FromJson<RemoteStorageData>(dataString);
+                        callback(remoteData);
+                    });
+                }
             });
         }
 
