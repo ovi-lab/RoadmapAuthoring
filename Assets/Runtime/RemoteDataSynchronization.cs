@@ -251,13 +251,21 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public void OverwriteLocal()
         {
-            ProcessRemoteStorageData((remoteData) =>
+            string activeBranchName = ActiveBranchName();
+            if (branchListCache.ContainsKey(activeBranchName))
             {
-                StorageData data = remoteData.GetData();
+                ProcessRemoteStorageData((remoteData) =>
+                {
+                    StorageData data = remoteData.GetData();
 
-                PlaceablesManager.Instance.ClearData();
-                PlaceablesManager.Instance.LoadFromStorageData(data);
-            });
+                    PlaceablesManager.Instance.ClearData();
+                    PlaceablesManager.Instance.LoadFromStorageData(data);
+                });
+            }
+            else
+            {
+                popupManager.OpenDialogWithMessage($"No branch named {activeBranchName}", () => { });
+            }
         }
 
         /// <summary>
