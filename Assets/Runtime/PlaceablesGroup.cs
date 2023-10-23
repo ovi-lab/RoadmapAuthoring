@@ -74,6 +74,7 @@ namespace ubc.ok.ovilab.roadmap
             {
                 Destroy(obj.gameObject);
             }
+            placeableObjects.Clear();
         }
     }
 }

@@ -16,7 +16,9 @@ namespace ubc.ok.ovilab.roadmap
 
         public override void OpenDialogWithMessage(string text, string yeaString, System.Action yeaCallback, string neaString, System.Action neaCallback, System.Action dismissCallback)
         {
-            IDialog dialog = dialogPool.Get().SetHeader(text);
+            IDialog dialog = dialogPool.Get();
+            dialog.Reset();
+            dialog = dialog.SetHeader(text);
 
             if(yeaCallback != null)
             {
@@ -42,13 +44,9 @@ namespace ubc.ok.ovilab.roadmap
         {
             if (activeDialog != null)
             {
-                try
-                {
-                    activeDialog.Dismiss();
-                }
-                catch { }
-                activeDialog = null;
+                activeDialog.Dismiss();
             }
+            activeDialog = null;
         }
     }
 }
