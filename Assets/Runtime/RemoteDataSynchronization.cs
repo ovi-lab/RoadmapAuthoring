@@ -368,6 +368,12 @@ namespace ubc.ok.ovilab.roadmap
             }
         }
 
+        public void CreateNewBranchWithPrompt(string branchName)
+        {
+            PlaceablesManager.Instance.SetBranchName(branchName);
+            popupManager.OpenDialogWithMessage("Local changes not pushed will be lost. Do you want to continue?", "Yes", () => ChangeToRemoteBranch(branchName), () => { });
+        }
+
         /// <summary>
         /// Returns the list names of branches. Uses the cachaed values.
         /// </summary>
