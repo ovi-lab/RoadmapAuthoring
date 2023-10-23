@@ -6,30 +6,35 @@
 
 using TMPro;
 using UnityEngine;
-using MixedReality.Toolkit.UX.Experimental;
 using MixedReality.Toolkit.UX;
+using System.Collections.Generic;
 
 namespace ubc.ok.ovilab.roadmap.UI
 {
     // NOTE: Copied from the MRTK3 VirtualizedScrollRectList example
-    public class PlaceablesVirtualizedScrollList : MonoBehaviour
+    public class VirtualizedScrollList : ScrollListManager
     {
-        [SerializeField] private GameObject menuRoot;
-        private VirtualizedScrollRectList virtualizedList;
+        private VirtualizedDynamicScrollRectList virtualizedList;
         private float destScroll;
         private bool animate;
         
         /// <summary>
         /// A Unity event function that is called on the frame when a script is enabled just before any of the update methods are called the first time.
         /// </summary> 
-        private void Start()
+        public override void SetupScrollList(List<ScrollListItem> items)
         {
-            RoadmapApplicationConfig config = PlaceablesManager.Instance.applicationConfig;
-            virtualizedList = GetComponent<VirtualizedScrollRectList>();
-            virtualizedList.SetItemCount(config.NumberOfPlaceables());
+            virtualizedList = GetComponent<VirtualizedDynamicScrollRectList>();
+            virtualizedList.Reset();
+            virtualizedList.SetItemCount(items.Count);
             virtualizedList.OnVisible = (go, i) =>
             {
-                string identifier = config.PlaceableIndexToName(i);
+                if (i >= items.Count)
+                {
+                    return;
+                }
+
+                ScrollListItem item = items[i];
+                string identifier = item.identifier;
                 foreach (var text in go.GetComponentsInChildren<TextMeshProUGUI>())
                 {
                     if (text.gameObject.name == "Text")
@@ -38,7 +43,7 @@ namespace ubc.ok.ovilab.roadmap.UI
                     }
                 }
                 go.GetComponent<PressableButton>().OnClicked.AddListener(() => {
-                    PlaceablesManager.Instance.SpawnObject(identifier);
+                    item.callback.Invoke();
                     menuRoot.SetActive(false);
                 });
             };

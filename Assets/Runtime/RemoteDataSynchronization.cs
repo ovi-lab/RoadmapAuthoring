@@ -16,6 +16,7 @@ namespace ubc.ok.ovilab.roadmap
         private const string DB_GROUPS = "groups";
         private const string DB_BRANCH = "branch";
         private const string _playerPrefsStorageKey = "RoadMapStorageSyncLastPushed";
+        private const string _playerPrefsBranchesList = "RoadMapStorageSyncBranchesList";
 
         private string lastPushedSceneDataId;
         private string LastPushedSceneDataId
@@ -37,6 +38,15 @@ namespace ubc.ok.ovilab.roadmap
             if (PlayerPrefs.HasKey(_playerPrefsStorageKey))
             {
                 lastPushedSceneDataId = PlayerPrefs.GetString(_playerPrefsStorageKey);
+            }
+
+            if (PlayerPrefs.HasKey(_playerPrefsBranchesList))
+            {
+                branchListCache = JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerPrefs.GetString(_playerPrefsBranchesList));
+            }
+            else
+            {
+                UpdateBranchesList();
             }
 
             popupManager = GetComponent<PopupManager>();
@@ -143,6 +153,7 @@ namespace ubc.ok.ovilab.roadmap
                 }
                 else
                 {
+                    idString = JsonConvert.DeserializeObject<string>(idString);
                     ProcessRequest($"/{DB_SCENE_DATA}/{idString}", HTTPMethod.GET, (dataString) =>
                     {
                         RemoteStorageData remoteData = JsonUtility.FromJson<RemoteStorageData>(dataString);
@@ -160,6 +171,7 @@ namespace ubc.ok.ovilab.roadmap
             ProcessRequest($"/{DB_BRANCH}/{GroupID()}", HTTPMethod.GET, (branchesString) =>
             {
                 branchListCache = JsonConvert.DeserializeObject<Dictionary<string, string>>(branchesString);
+                PlayerPrefs.SetString(_playerPrefsStorageKey, JsonConvert.SerializeObject(branchListCache));
             });
         }
 
@@ -176,6 +188,23 @@ namespace ubc.ok.ovilab.roadmap
                 StorageData result = StorageData.MergeData(remoteDataStorage.GetData(), localData, localData.lastWrittenPlatform, localData.buildKey, localData.branchName);
 
                 /// Clear and write local data
+                PlaceablesManager.Instance.ClearData();
+                PlaceablesManager.Instance.LoadFromStorageData(result);
+                /// Write remote data
+                SaveSceneData(result);
+            }, branchName);
+        }
+
+        /// <summary>
+        /// Change to given branch. Unsynced changes will be lost.
+        /// </summary>
+        public void ChangeToRemoteBranch(string branchName)
+        {
+            ProcessRemoteStorageData((remoteDataStorage) =>
+            {
+                StorageData result = remoteDataStorage.GetData();
+                /// Clear and write local data
+                PlaceablesManager.Instance.SetBranchName(branchName);
                 PlaceablesManager.Instance.ClearData();
                 PlaceablesManager.Instance.LoadFromStorageData(result);
                 /// Write remote data
@@ -325,6 +354,30 @@ namespace ubc.ok.ovilab.roadmap
                     PlaceablesManager.Instance.LoadFromStorageData(localDataBeforeSync);
                 }, () => { });
             }, () => { });
+        }
+
+        public void ChangeToRemoteBranchWithPrompt(string branchName)
+        {
+            if (branchName != ActiveBranchName())
+            {
+                popupManager.OpenDialogWithMessage("Local changes not pushed will be lost. Do you want to continue?", "Yes", () => ChangeToRemoteBranch(branchName), () => { });
+            }
+            else
+            {
+                popupManager.OpenDialogWithMessage("Selected active branch. Nothing happens", () => { });
+            }
+        }
+
+        /// <summary>
+        /// Returns the list names of branches. Uses the cachaed values.
+        /// </summary>
+        public List<string> GetBranches()
+        {
+            if (branchListCache == null)
+            {
+                UpdateBranchesList();
+            }
+            return branchListCache.Keys.ToList();
         }
         #endregion
     }

@@ -1,29 +1,36 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ubc.ok.ovilab.roadmap
+namespace ubc.ok.ovilab.roadmap.UI
 {
     /// <summary>
     /// Used to populate the items for the add button on the UI
     /// </summary>
-    public class DropdownController : MonoBehaviour
+    public class DropdownController : ScrollListManager
     {
         [Tooltip("The prefab to use to generate items in the dropdown.")]
         public GameObject itemPrefab;
-        [Tooltip("The root object of the dropdown menu.")]
-        public GameObject menuRoot;
 
-        private void Start()
+        private List<GameObject> scrollItems = new List<GameObject>();
+
+        public override void SetupScrollList(List<ScrollListItem> items)
         {
-            RoadmapApplicationConfig config = PlaceablesManager.Instance.applicationConfig;
-            foreach(string placeableIdentifer in config.PlacableIdentifierList())
+            foreach(GameObject go in scrollItems)
+            {
+                Destroy(go);
+            }
+
+            scrollItems.Clear();
+
+            foreach(ScrollListItem item in items)
             {
                 GameObject go = Instantiate(itemPrefab, this.transform);
-                go.transform.name = placeableIdentifer;
-                go.GetComponentInChildren<TextMeshProUGUI>().text = placeableIdentifer;
+                go.transform.name = item.identifier;
+                go.GetComponentInChildren<TextMeshProUGUI>().text = item.identifier;
                 go.GetComponent<Button>().onClick.AddListener(() => {
-                    PlaceablesManager.Instance.SpawnObject(placeableIdentifer);
+                    item.callback.Invoke();
                     menuRoot.SetActive(false);
                 });
             }
