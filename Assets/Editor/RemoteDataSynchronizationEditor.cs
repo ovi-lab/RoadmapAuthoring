@@ -19,6 +19,11 @@ namespace ubc.ok.ovilab.roadmap.editor
             base.OnInspectorGUI();
             GUI.enabled = Application.isPlaying;
 
+            if (GUI.enabled)
+            {
+                EditorGUILayout.LabelField($"Current branch: {PlaceablesManager.Instance.BranchName}");
+            }
+
             EditorGUILayout.Separator();
 
             if (GUILayout.Button("Sync With Remote"))
@@ -34,6 +39,11 @@ namespace ubc.ok.ovilab.roadmap.editor
             if (GUILayout.Button("Overwrite Local"))
             {
                 t.OverwriteLocal();
+            }
+
+            if (GUILayout.Button("Update branches list"))
+            {
+                t.UpdateBranchesList();
             }
 
             EditorGUILayout.Separator();

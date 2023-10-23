@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   identifier: TestApplicationData
   buildKey: 00001
-  groupID: 0001
+  groupID: 5555
   boundingBoxWithHandlesPrefab: {fileID: 5671351296789090341, guid: 7b542306e34a62f4c9a822fcb19b7d99,
     type: 3}
   stateChanged: 1
@@ -31,10 +31,6 @@ MonoBehaviour:
     prefab: {fileID: 919132149155446097, guid: 5d39d2acd68146e46b50daf59568729c, type: 3}
   - identifier: cofeecup78
     prefab: {fileID: 919132149155446097, guid: 1150f88d635809a4daf426ce19c38186, type: 3}
-  - identifier: cofeecup778
-    prefab: {fileID: 100002, guid: 6ceef383a3dfd0a4e9c38b8d793170e4, type: 3}
-  - identifier: cofeecup78
-    prefab: {fileID: 100000, guid: 1b72c1e6302ca7542afd89257b6367aa, type: 3}
   - identifier: 'cofeecup45 '
     prefab: {fileID: 100048, guid: 60260aaff9ed8764d9aad59253d848f7, type: 3}
   - identifier: 'cofeecup 55 '

@@ -29,6 +29,7 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         private PopupManager popupManager;
+        private Dictionary<string, string> branchListCache;
 
         #region Unity functions
         private void Start()
@@ -66,7 +67,7 @@ namespace ubc.ok.ovilab.roadmap
         /// <summary>
         /// Get the active scene ID to use
         /// </summary>
-        private string BranchName()
+        private string ActiveBranchName()
         {
             return $"{PlaceablesManager.Instance.BranchName}";
         }
@@ -98,11 +99,11 @@ namespace ubc.ok.ovilab.roadmap
         /// <summary>
         /// Save the scene data to the remote.
         /// </summary>
-        public void SaveSceneData(StorageData data)
+        private void SaveSceneData(StorageData data)
         {
             CheckSceneInScenes(() =>
             {
-                RemoteStorageData sceneData = new RemoteStorageData(System.DateTime.Now.Ticks, data, GroupID(), BranchName());
+                RemoteStorageData sceneData = new RemoteStorageData(System.DateTime.Now.Ticks, data, GroupID(), ActiveBranchName());
 
                 ProcessRequest($"/{DB_SCENE_DATA}", HTTPMethod.POST, (nameString) =>
                 {
@@ -111,15 +112,66 @@ namespace ubc.ok.ovilab.roadmap
                     {
                         ProcessRequest($"/{DB_SCENES}/{SceneID()}/{DB_SCENE_DATA}/{name}", HTTPMethod.PUT, (_) =>
                         {
-                            ProcessRequest($"/{DB_BRANCH}/{GroupID()}/{BranchName()}", HTTPMethod.PUT, (_) =>
+                            ProcessRequest($"/{DB_BRANCH}/{GroupID()}/{ActiveBranchName()}", HTTPMethod.PUT, (_) =>
                             {
                                 LastPushedSceneDataId = name; // Set only if everything went smooth!
-                            }, name);
+                                UpdateBranchesList();
+                            }, JsonConvert.SerializeObject(name));
                         }, JsonConvert.SerializeObject(sceneData.commit_time));
                     }, JsonConvert.SerializeObject(sceneData, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
 
                 }, JsonConvert.SerializeObject(true));
             });
+        }
+
+        /// <summary>
+        /// Exectue callback with the latest scene data on remote.
+        /// </summary>
+        private void ProcessRemoteStorageData(System.Action<RemoteStorageData> callback, string branchName=null)
+        {
+            if (string.IsNullOrEmpty(branchName))
+            {
+                branchName = ActiveBranchName();
+            }
+            ProcessRequest($"/{DB_BRANCH}/{GroupID()}/{branchName}", HTTPMethod.GET, (idString) =>
+            {
+                ProcessRequest($"/{DB_SCENE_DATA}/{idString}", HTTPMethod.GET, (dataString) =>
+                {
+                    RemoteStorageData remoteData = JsonUtility.FromJson<RemoteStorageData>(dataString);
+                    callback(remoteData);
+                });
+            });
+        }
+
+        /// <summary>
+        /// Update list of branches from remote cache
+        /// </summary>
+        public void UpdateBranchesList()
+        {
+            ProcessRequest($"/{DB_BRANCH}/{GroupID()}", HTTPMethod.GET, (branchesString) =>
+            {
+                branchListCache = JsonConvert.DeserializeObject<Dictionary<string, string>>(branchesString);
+            });
+        }
+
+        /// <summary>
+        /// Sync with given branch.
+        /// </summary>
+        public void MergeWithRemoteBranch(string branchName)
+        {
+            StorageData localData = PlaceablesManager.Instance.GetStorageData();
+
+            ProcessRemoteStorageData((remoteDataStorage) =>
+            {
+                /// localData has the current platform set as LastWrittenPlatform
+                StorageData result = StorageData.MergeData(remoteDataStorage.GetData(), localData, localData.lastWrittenPlatform, localData.buildKey, localData.branchName);
+
+                /// Clear and write local data
+                PlaceablesManager.Instance.ClearData();
+                PlaceablesManager.Instance.LoadFromStorageData(result);
+                /// Write remote data
+                SaveSceneData(result);
+            }, branchName);
         }
 
         /// <summary>
@@ -161,21 +213,6 @@ namespace ubc.ok.ovilab.roadmap
 
                 PlaceablesManager.Instance.ClearData();
                 PlaceablesManager.Instance.LoadFromStorageData(data);
-            });
-        }
-
-        /// <summary>
-        /// Exectue callback with the latest scene data on remote.
-        /// </summary>
-        public void ProcessRemoteStorageData(System.Action<RemoteStorageData> callback)
-        {
-            ProcessRequest($"/{DB_BRANCH}/{GroupID()}/{BranchName()}", HTTPMethod.GET, (idString) =>
-            {
-                ProcessRequest($"/{DB_SCENE_DATA}/{idString}", HTTPMethod.GET, (dataString) =>
-                {
-                    RemoteStorageData remoteData = JsonUtility.FromJson<RemoteStorageData>(dataString);
-                    callback(remoteData);
-                });
             });
         }
 
