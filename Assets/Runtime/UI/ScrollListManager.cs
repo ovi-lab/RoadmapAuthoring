@@ -32,7 +32,11 @@ namespace ubc.ok.ovilab.roadmap.UI
         {
             SetupScrollList(RemoteDataSynchronization.Instance.GetBranches()
                             .Select(i => new ScrollListItem(i,
-                                                            () => RemoteDataSynchronization.Instance.ChangeToRemoteBranchWithPrompt(i)))
+                                                            () =>
+                                                            {
+                                                                RemoteDataSynchronization.Instance.ChangeToRemoteBranchWithPrompt(i);
+                                                                BranchDataManager.Instance.Refresh();
+                                                            }))
                             .ToList());
             menuRoot.SetActive(true);
         }

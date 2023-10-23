@@ -4,6 +4,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.Networking;
 using System.Collections;
+using System;
 
 namespace ubc.ok.ovilab.roadmap
 {
@@ -17,6 +18,7 @@ namespace ubc.ok.ovilab.roadmap
         private const string DB_BRANCH = "branch";
         private const string _playerPrefsStorageKey = "RoadMapStorageSyncLastPushed";
         private const string _playerPrefsBranchesList = "RoadMapStorageSyncBranchesList";
+        private const string _playerPrefsBranchesCachedTime = "RoadMapStorageSyncBranchesCachedTime";
 
         private string lastPushedSceneDataId;
         private string LastPushedSceneDataId
@@ -31,6 +33,7 @@ namespace ubc.ok.ovilab.roadmap
 
         private PopupManager popupManager;
         private Dictionary<string, string> branchListCache;
+        private long branchesListCachedTime;
 
         #region Unity functions
         private void Start()
@@ -40,9 +43,10 @@ namespace ubc.ok.ovilab.roadmap
                 lastPushedSceneDataId = PlayerPrefs.GetString(_playerPrefsStorageKey);
             }
 
-            if (PlayerPrefs.HasKey(_playerPrefsBranchesList))
+            if (PlayerPrefs.HasKey(_playerPrefsBranchesList) && PlayerPrefs.HasKey(_playerPrefsBranchesCachedTime))
             {
                 branchListCache = JsonConvert.DeserializeObject<Dictionary<string, string>>(PlayerPrefs.GetString(_playerPrefsBranchesList));
+                branchesListCachedTime = long.Parse(PlayerPrefs.GetString(_playerPrefsBranchesCachedTime));
             }
             else
             {
@@ -171,7 +175,9 @@ namespace ubc.ok.ovilab.roadmap
             ProcessRequest($"/{DB_BRANCH}/{GroupID()}", HTTPMethod.GET, (branchesString) =>
             {
                 branchListCache = JsonConvert.DeserializeObject<Dictionary<string, string>>(branchesString);
+                branchesListCachedTime = System.DateTime.Now.Ticks;
                 PlayerPrefs.SetString(_playerPrefsStorageKey, JsonConvert.SerializeObject(branchListCache));
+                PlayerPrefs.SetString(_playerPrefsBranchesCachedTime, branchesListCachedTime.ToString());
             });
         }
 
@@ -384,6 +390,19 @@ namespace ubc.ok.ovilab.roadmap
                 UpdateBranchesList();
             }
             return branchListCache.Keys.ToList();
+        }
+
+        /// <summary>
+        /// Get the last time the branche list caches was updated in human readable form.
+        /// </summary>
+        public string GetBranchesCacheTime()
+        {
+            if (branchesListCachedTime == 0)
+            {
+                return "Uninitialzed";
+            }
+            DateTime dateTime = new DateTime(branchesListCachedTime);
+            return dateTime.ToString("MM/dd/yyyy h:mm tt");
         }
         #endregion
     }
