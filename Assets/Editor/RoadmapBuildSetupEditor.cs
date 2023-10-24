@@ -22,6 +22,9 @@ namespace ubc.ok.ovilab.roadmap.editor
         };
 
         private string buildPath = "Builds/build.apk";
+        private bool showKeystoreSettings;
+        private string keystorePass;
+        private string keyAliasPass;
 
         void OnEnable()
         {
@@ -80,6 +83,28 @@ namespace ubc.ok.ovilab.roadmap.editor
                     case Platform.ARCore:
                         ARCoreSettings();
                         break;
+                }
+            }
+
+            // Keystore related settings
+            if (!System.IO.File.Exists(RoadmapSetup.keystoreFullPathLocation))
+            {
+                EditorGUILayout.HelpBox($"The keystore is missing. It is expected to be in {RoadmapSetup.keystoreFullPathLocation}", MessageType.Error);
+            }
+            showKeystoreSettings = EditorGUILayout.Foldout(showKeystoreSettings, "Keystore settings");
+            if (showKeystoreSettings)
+            {
+                EditorGUI.BeginChangeCheck();
+                EditorGUI.indentLevel++;
+                keystorePass = EditorGUILayout.PasswordField("keystore pass", keystorePass);
+                keyAliasPass = EditorGUILayout.PasswordField("keyAlias pass", keyAliasPass);
+                EditorGUI.indentLevel--;
+                if (EditorGUI.EndChangeCheck())
+                {
+                    RoadmapSettings.instance.keystorePass = keystorePass;
+                    RoadmapSettings.instance.keyAliasPass = keyAliasPass;
+                    RoadmapSettings.instance.Save();
+                    RoadmapSetup.Update();
                 }
             }
 

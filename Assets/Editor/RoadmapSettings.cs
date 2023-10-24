@@ -12,6 +12,8 @@ namespace ubc.ok.ovilab.roadmap.editor
         [SerializeField] public SceneAsset oculusScene;
         [SerializeField] public SceneAsset arcoreScene;
         [SerializeField] public string groupID;
+        [SerializeField] public string keystorePass;
+        [SerializeField] public string keyAliasPass;
 
         public void SetPlatformm(Platform platform)
         {
