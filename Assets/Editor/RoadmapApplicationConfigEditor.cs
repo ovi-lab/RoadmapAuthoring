@@ -43,6 +43,29 @@ namespace ubc.ok.ovilab.roadmap.editor
             }
             EditorGUILayout.Space();
 
+            if (RoadmapSettings.instance.activeConfig != config)
+            {
+                if (GUILayout.Button("Make this the active config"))
+                {
+                    // Add the config asset to the build
+                    var preloadedAssets = UnityEditor.PlayerSettings.GetPreloadedAssets().ToList();
+                    if (RoadmapSettings.instance.activeConfig != null)
+                    {
+                        preloadedAssets.Remove(RoadmapSettings.instance.activeConfig);
+                    }
+                    preloadedAssets.Add(config);
+                    UnityEditor.PlayerSettings.SetPreloadedAssets(preloadedAssets.ToArray());
+                    RoadmapSettings.instance.activeConfig = config;
+                }
+            }
+            else
+            {
+                GUI.enabled = false;
+                GUILayout.Button("This is the active config");
+                GUI.enabled = true;
+            }
+            EditorGUILayout.Space();
+
             base.OnInspectorGUI();
             serializedObject.Update();
 

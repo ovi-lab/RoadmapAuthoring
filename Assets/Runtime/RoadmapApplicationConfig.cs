@@ -8,11 +8,14 @@ using UnityEditor;
 
 namespace ubc.ok.ovilab.roadmap
 {
+    [InitializeOnLoad]
     [CreateAssetMenu(fileName = "Data", menuName = "Roadmap/RoadmapApplicationData", order = 1)]
     public class RoadmapApplicationConfig : ScriptableObject
     {
         private static string boundingBoxWithHandlesPath = "Packages/org.mixedrealitytoolkit.spatialmanipulation/BoundsControl/Prefabs/BoundingBoxWithHandles.prefab";
         internal static string boundingBoxWithHandlesName = "BoundingBoxWithHandles";
+
+        public static RoadmapApplicationConfig activeApplicationConfig;
 
         [SerializeField] public string identifier = "Data";
         [Tooltip("Changing this key will wipe all saved data first time a new build is run")]
@@ -80,6 +83,15 @@ namespace ubc.ok.ovilab.roadmap
             return placables.Count();
         }
 
+#if !UNITY_EDITOR
+        // During runtime, make sure to set this to be the active config
+        public void OnEnable()
+        {
+            Debug.Log($"Using applicationConfig `{identifier}`");
+            activeApplicationConfig = this;
+        }
+#endif
+
 #if UNITY_EDITOR
         // Editor-only magic function
         private void OnValidate()
@@ -134,6 +146,7 @@ namespace ubc.ok.ovilab.roadmap
             placables = placables.GroupBy(x => x.prefab).Select(g => g.First()).ToList();
             OnValidate();
         }
+
 #endif
     }
 

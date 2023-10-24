@@ -9,8 +9,6 @@ using System.IO;
 using System.Diagnostics;
 using System.Text;
 using System.Linq;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 
 namespace ubc.ok.ovilab.roadmap.editor
 {
@@ -83,6 +81,15 @@ namespace ubc.ok.ovilab.roadmap.editor
                         ARSettings();
                         break;
                 }
+            }
+
+            if (RoadmapSettings.instance.activeConfig == null)
+            {
+                EditorGUILayout.HelpBox("The active RoadmapApplicationConfig is not set! Select an RoadmapApplicationConfig instance and click `Make this the active config`.", MessageType.Error);
+            }
+            else
+            {
+                EditorGUILayout.LabelField("Active config:", AssetDatabase.GetAssetPath(RoadmapSettings.instance.activeConfig.GetInstanceID()));
             }
 
             EditorGUILayout.LabelField("Built APK Path:", buildPath);
