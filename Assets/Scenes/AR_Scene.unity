@@ -5770,7 +5770,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d49308a18a8d55a4fae481d5c691e0ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  applicationConfig: {fileID: 11400000, guid: 531ed61140d66ba459597daa21b0a046, type: 2}
   groupManager: {fileID: 1087151586}
 --- !u!4 &1087151591
 Transform:

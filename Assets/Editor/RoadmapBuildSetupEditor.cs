@@ -83,6 +83,7 @@ namespace ubc.ok.ovilab.roadmap.editor
                 }
             }
 
+            EditorGUILayout.Space();
             if (RoadmapSettings.instance.activeConfig == null)
             {
                 EditorGUILayout.HelpBox("The active RoadmapApplicationConfig is not set! Select an RoadmapApplicationConfig instance and click `Make this the active config`.", MessageType.Error);
@@ -91,8 +92,15 @@ namespace ubc.ok.ovilab.roadmap.editor
             {
                 EditorGUILayout.LabelField("Active config:", AssetDatabase.GetAssetPath(RoadmapSettings.instance.activeConfig.GetInstanceID()));
             }
+            if (GUILayout.Button(new GUIContent("Refresh active config", "In case the active config wasn't properly loaded in."), GUILayout.Width(130)))
+            {
+                RoadmapSetup.EnsureConfigLoaded();
+            }
+            EditorGUILayout.Space();
 
             EditorGUILayout.LabelField("Built APK Path:", buildPath);
+
+            EditorGUILayout.Space();
 
             // Keystore related settings
             if (!System.IO.File.Exists(RoadmapSetup.keystoreFullPathLocation))
@@ -116,9 +124,14 @@ namespace ubc.ok.ovilab.roadmap.editor
                 }
             }
 
+            EditorGUILayout.Space();
+
             if (GUILayout.Button("Start build"))
             {
                 UnityEngine.Debug.Log("Starting Build!");
+
+                RoadmapSetup.EnsureConfigLoaded();
+
                 BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
                 switch(currentPlatform)
                 {

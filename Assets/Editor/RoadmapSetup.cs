@@ -22,7 +22,7 @@ namespace ubc.ok.ovilab.roadmap.editor
         {
             if (RoadmapSettings.instance.activeConfig == null)
             {
-                throw new System.Exception("The active RoadmapApplicationConfig is not set! Select an RoadmapApplicationConfig instance and click `Make this the active config`.");
+                Debug.LogError("The active RoadmapApplicationConfig is not set! Select an RoadmapApplicationConfig instance and click `Make this the active config`.");
             }
             else
             {
