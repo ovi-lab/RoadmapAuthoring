@@ -244,7 +244,7 @@ namespace ubc.ok.ovilab.roadmap
             ProcessRemoteStorageData((remoteDataStorage) =>
             {
                 StorageData result = remoteDataStorage.GetData();
-                SafeLoadFromStorageData(result, localData, () => PlaceablesManager.Instance.SetBranchName(branchName));
+                SafeLoadFromStorageData(result, localData, () => PlaceablesManager.Instance.SetBranchName(branchName), false);
 
             }, branchName);
         }
