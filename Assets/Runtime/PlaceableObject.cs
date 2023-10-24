@@ -130,6 +130,11 @@ namespace ubc.ok.ovilab.roadmap
         public static PlaceableObject SetupPlaceableObject(string prefabIdentifier, string identifier, PlaceablesGroup placeablesGroup, long lastUpdate=-1)
         {
             GameObject placeableGameObject = RoadmapApplicationConfig.activeApplicationConfig.GetPleaceableGameObject(prefabIdentifier, placeablesGroup.transform);
+            if (placeableGameObject == null)
+            {
+                return null;
+            }
+
             AddBoundsToAllChildren(placeableGameObject.transform.GetChild(0).gameObject);
 
             SetupMRTKControls(placeableGameObject);

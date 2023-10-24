@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace ubc.ok.ovilab.roadmap
@@ -134,12 +136,25 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         /// <summary>
-        /// Populate application state from a `StorageData`
+        /// Populate application state from a `StorageData`.
+        /// If suceeded will return true.
         /// </summary>
-        public void LoadFromStorageData(StorageData storageData)
+        public bool LoadFromStorageData(StorageData storageData, bool force=false)
         {
             Debug.Log($"Loading data\n{storageData}");
+            if (!force)
+            {
+                List<string> placeables = RoadmapApplicationConfig.activeApplicationConfig.PlacableIdentifierList().ToList();
+                foreach (PlaceableObjectData data in storageData.groups.SelectMany(g => g.PlaceableDataList))
+                {
+                    if (!placeables.Contains(data.prefabIdentifier))
+                    {
+                        return false;
+                    }
+                }
+            }
             storageData.groups.ForEach(groupData => SetupGroup(groupData));
+            return true;
         }
 
         /// <summary>
@@ -196,6 +211,11 @@ namespace ubc.ok.ovilab.roadmap
         public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, PlaceablesGroup placeablesGroup, System.Action<PlaceableObject> onClickedCallback, Vector3 position, Quaternion rotation, Vector3 scale, long lastUpdate=-1)
         {
             PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(prefabIdentifier, identifier, placeablesGroup, lastUpdate);
+            if (placeableObject ==  null)
+            {
+                return null;
+            }
+
             placeableObject.onClickedCallback += onClickedCallback;
             placeableObject.SetLocalPose(position, rotation, scale);
             placeableObject.SetObjectManipulationEnabled(modifyable);

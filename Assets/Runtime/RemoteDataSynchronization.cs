@@ -182,6 +182,43 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         /// <summary>
+        /// Safly update the lcoal storage data
+        /// </summary>
+        private void SafeLoadFromStorageData(StorageData result, StorageData fallback, System.Action sucessCallback=null, bool saveScene=true)
+        {
+            /// Clear and write local data
+            PlaceablesManager.Instance.ClearData();
+
+            if(PlaceablesManager.Instance.LoadFromStorageData(result))
+            {
+                sucessCallback?.Invoke();
+                if (saveScene)
+                {
+                    /// Write remote data
+                    SaveSceneData(result);
+                }
+            }
+            else
+            {
+                popupManager.OpenDialogWithMessage("There are placeables not recognized by currently built app config. If continued, missing prefabs will be discarded. Continue?", "yes", () =>
+                {
+                    if (PlaceablesManager.Instance.LoadFromStorageData(result, force:true))
+                    {
+                        sucessCallback?.Invoke();
+                        if (saveScene)
+                        {
+                            /// Write remote data
+                            SaveSceneData(result);
+                        }
+                    }
+                }, () =>
+                {
+                    PlaceablesManager.Instance.LoadFromStorageData(fallback, force:true);
+                });
+            }
+        }
+
+        /// <summary>
         /// Sync with given branch.
         /// </summary>
         public void MergeWithRemoteBranch(string branchName)
@@ -193,11 +230,7 @@ namespace ubc.ok.ovilab.roadmap
                 /// localData has the current platform set as LastWrittenPlatform
                 StorageData result = StorageData.MergeData(remoteDataStorage.GetData(), localData, localData.lastWrittenPlatform, localData.buildKey, localData.branchName);
 
-                /// Clear and write local data
-                PlaceablesManager.Instance.ClearData();
-                PlaceablesManager.Instance.LoadFromStorageData(result);
-                /// Write remote data
-                SaveSceneData(result);
+                SafeLoadFromStorageData(result, localData);
             }, branchName);
         }
 
@@ -206,15 +239,13 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public void ChangeToRemoteBranch(string branchName)
         {
+            StorageData localData = PlaceablesManager.Instance.GetStorageData();
+
             ProcessRemoteStorageData((remoteDataStorage) =>
             {
                 StorageData result = remoteDataStorage.GetData();
-                /// Clear and write local data
-                PlaceablesManager.Instance.SetBranchName(branchName);
-                PlaceablesManager.Instance.ClearData();
-                PlaceablesManager.Instance.LoadFromStorageData(result);
-                /// Write remote data
-                SaveSceneData(result);
+                SafeLoadFromStorageData(result, localData, () => PlaceablesManager.Instance.SetBranchName(branchName));
+
             }, branchName);
         }
 
@@ -229,12 +260,7 @@ namespace ubc.ok.ovilab.roadmap
             {
                 /// localData has the current platform set as LastWrittenPlatform
                 StorageData result = StorageData.MergeData(remoteDataStorage.GetData(), localData, localData.lastWrittenPlatform, localData.buildKey, localData.branchName);
-
-                /// Clear and write local data
-                PlaceablesManager.Instance.ClearData();
-                PlaceablesManager.Instance.LoadFromStorageData(result);
-                /// Write remote data
-                SaveSceneData(result);
+                SafeLoadFromStorageData(result, localData);
             });
         }
 
@@ -257,9 +283,10 @@ namespace ubc.ok.ovilab.roadmap
                 ProcessRemoteStorageData((remoteData) =>
                 {
                     StorageData data = remoteData.GetData();
+                    StorageData localData = PlaceablesManager.Instance.GetStorageData();
 
                     PlaceablesManager.Instance.ClearData();
-                    PlaceablesManager.Instance.LoadFromStorageData(data);
+                    SafeLoadFromStorageData(data, localData, saveScene:false);
                 });
             }
             else
@@ -366,7 +393,7 @@ namespace ubc.ok.ovilab.roadmap
                 popupManager.OpenDialogWithMessage("Sync was a success?", "Yes", () => { }, "No(revert)", () =>
                 {
                     RemoveLastRemoteStorageData();
-                    PlaceablesManager.Instance.LoadFromStorageData(localDataBeforeSync);
+                    PlaceablesManager.Instance.LoadFromStorageData(localDataBeforeSync, force:true);
                 }, () => { });
             }, () => { });
         }
