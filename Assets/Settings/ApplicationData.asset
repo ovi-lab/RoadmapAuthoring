@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: ApplicationData
   m_EditorClassIdentifier: 
   identifier: TestApplicationData
-  buildKey: 00001
+  buildKey: 531ed61140d66ba459597daa21b0a046
   groupID: 5555
   boundingBoxWithHandlesPrefab: {fileID: 5671351296789090341, guid: 7b542306e34a62f4c9a822fcb19b7d99,
     type: 3}
-  stateChanged: 1
+  stateChanged: 0
   placables:
   - identifier: cofeecup74
     prefab: {fileID: 100002, guid: 6ceef383a3dfd0a4e9c38b8d793170e4, type: 3}

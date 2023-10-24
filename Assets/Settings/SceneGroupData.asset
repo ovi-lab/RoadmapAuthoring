@@ -23,3 +23,39 @@ MonoBehaviour:
     altitude: 0
     position: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0, w: 0}
+  - identifier: SW-artsbuilding
+    latitude: 49.939409264433884
+    longitude: -119.39665712736777
+    altitude: 0
+    position: {x: -22.25, y: 0, z: -13.37}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+  - identifier: SE-adminbuilding
+    latitude: 49.939409264433884
+    longitude: -119.39621799625903
+    altitude: 0
+    position: {x: 9.26, y: 0, z: -13.37}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+  - identifier: S-monument
+    latitude: 49.93923464946761
+    longitude: -119.39635122677235
+    altitude: 0
+    position: {x: -0.3, y: 0, z: -32.8}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+  - identifier: N-tims-lake
+    latitude: 49.939734319677726
+    longitude: -119.39603348036765
+    altitude: 0
+    position: {x: 22.5, y: 0, z: 22.8}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+  - identifier: NW-science
+    latitude: 49.939734319677726
+    longitude: -119.39644459961913
+    altitude: 0
+    position: {x: -7, y: 0, z: 22.8}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+  - identifier: W-admin-pond
+    latitude: 49.93951953338311
+    longitude: -119.39610037433692
+    altitude: 0
+    position: {x: 17.7, y: 0, z: -1.1}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
