@@ -63,7 +63,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         private string SceneID()
         {
-            return $"{GroupID()}_{PlaceablesManager.Instance.applicationConfig.buildKey}";
+            return $"{GroupID()}_{RoadmapApplicationConfig.activeApplicationConfig.buildKey}";
         }
 
         /// <summary>
@@ -71,11 +71,11 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         private string GroupID()
         {
-            if (string.IsNullOrEmpty(PlaceablesManager.Instance.applicationConfig.groupID))
+            if (string.IsNullOrEmpty(RoadmapApplicationConfig.activeApplicationConfig.groupID))
             {
                 throw new UnityException($"GroupID not set");
             }
-            return $"{PlaceablesManager.Instance.applicationConfig.groupID}";
+            return $"{RoadmapApplicationConfig.activeApplicationConfig.groupID}";
         }
 
         /// <summary>

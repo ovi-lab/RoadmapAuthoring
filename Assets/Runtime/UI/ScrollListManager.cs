@@ -17,7 +17,7 @@ namespace ubc.ok.ovilab.roadmap.UI
         /// </summary>
         public void ShowPlaceablesList()
         {
-            RoadmapApplicationConfig config = PlaceablesManager.Instance.applicationConfig;
+            RoadmapApplicationConfig config = RoadmapApplicationConfig.activeApplicationConfig;
             SetupScrollList(config.PlacableIdentifierList()
                             .Select(i => new ScrollListItem(i,
                                                              () => PlaceablesManager.Instance.SpawnObject(i)))

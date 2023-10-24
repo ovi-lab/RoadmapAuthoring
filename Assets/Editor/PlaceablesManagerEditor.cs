@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
@@ -29,7 +27,7 @@ namespace ubc.ok.ovilab.roadmap.editor
             if (GUILayout.Button(currentSelectedSpawnObject == null ? "Select" : $"Selected: {currentSelectedSpawnObject}"))
             {
                 GenericMenu menu = new GenericMenu();
-                foreach(var identifier in t.applicationConfig.PlacableIdentifierList())
+                foreach(var identifier in RoadmapApplicationConfig.activeApplicationConfig.PlacableIdentifierList())
                 {
                     menu.AddItem(new GUIContent(identifier), false, SpawnClicked, identifier);
                 }

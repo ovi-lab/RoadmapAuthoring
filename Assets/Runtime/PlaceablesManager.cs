@@ -10,7 +10,6 @@ namespace ubc.ok.ovilab.roadmap
     [RequireComponent(typeof(PopupManager))]
     public class PlaceablesManager : Singleton<PlaceablesManager>
     {
-        [SerializeField] public RoadmapApplicationConfig applicationConfig;
         [SerializeField] private GroupManager groupManager;
         
         private const string _playerPrefsStorageKey = "RoadMapStorage";
@@ -35,7 +34,7 @@ namespace ubc.ok.ovilab.roadmap
             popupManager = GetComponent<PopupManager>();
             modifyable = false;
             // TODO: remove the dependency on build key
-            if (!(PlayerPrefs.HasKey("BuildKey") && PlayerPrefs.GetString("BuildKey") == applicationConfig.buildKey))
+            if (!(PlayerPrefs.HasKey("BuildKey") && PlayerPrefs.GetString("BuildKey") == RoadmapApplicationConfig.activeApplicationConfig.buildKey))
             {
                 groupManager.RunAfterInitialized(ClearData);
             }
@@ -102,7 +101,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public StorageData GetStorageData()
         {
-            return new StorageData(groupManager.GetPlaceablesGroupData(), PlatformManager.Instance.currentPlatform.ToString(), applicationConfig.buildKey, BranchName);
+            return new StorageData(groupManager.GetPlaceablesGroupData(), PlatformManager.Instance.currentPlatform.ToString(), RoadmapApplicationConfig.activeApplicationConfig.buildKey, BranchName);
         }
 
         /// <summary>
@@ -112,7 +111,7 @@ namespace ubc.ok.ovilab.roadmap
         {
             groupManager.ClearAllPlaceableObjects();
             PlayerPrefs.DeleteAll();
-            PlayerPrefs.SetString("BuildKey", applicationConfig.buildKey);
+            PlayerPrefs.SetString("BuildKey", RoadmapApplicationConfig.activeApplicationConfig.buildKey);
             PlayerPrefs.Save();
             Debug.Log("Internal Storage Reset");
         }
@@ -161,7 +160,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         private string GetSaveFileLocation()
         {
-            return System.IO.Path.Combine(Application.persistentDataPath, $"{applicationConfig.buildKey}_{_playerPrefsStorageKey}.json");
+            return System.IO.Path.Combine(Application.persistentDataPath, $"{RoadmapApplicationConfig.activeApplicationConfig.buildKey}_{_playerPrefsStorageKey}.json");
         }
         #endregion
 

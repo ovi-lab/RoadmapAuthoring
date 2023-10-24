@@ -129,7 +129,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public static PlaceableObject SetupPlaceableObject(string prefabIdentifier, string identifier, PlaceablesGroup placeablesGroup, long lastUpdate=-1)
         {
-            GameObject placeableGameObject = PlaceablesManager.Instance.applicationConfig.GetPleaceableGameObject(prefabIdentifier, placeablesGroup.transform);
+            GameObject placeableGameObject = RoadmapApplicationConfig.activeApplicationConfig.GetPleaceableGameObject(prefabIdentifier, placeablesGroup.transform);
             AddBoundsToAllChildren(placeableGameObject.transform.GetChild(0).gameObject);
 
             SetupMRTKControls(placeableGameObject);
@@ -206,7 +206,7 @@ namespace ubc.ok.ovilab.roadmap
             objectManipulator.selectMode = InteractableSelectMode.Multiple;
 
             BoundsControl boundsControl = boundsControlObj.AddComponent<BoundsControl>();
-            boundsControl.BoundsVisualsPrefab = PlaceablesManager.Instance.applicationConfig.boundingBoxWithHandlesPrefab;
+            boundsControl.BoundsVisualsPrefab = RoadmapApplicationConfig.activeApplicationConfig.boundingBoxWithHandlesPrefab;
             boundsControl.BoundsCalculationMethod = BoundsCalculator.BoundsCalculationMethod.RendererOverCollider;
             boundsControl.HandlesActive = true;
             boundsControl.EnabledHandles = handleTypeToUse;
