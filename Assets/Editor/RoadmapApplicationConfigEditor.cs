@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -65,6 +63,8 @@ namespace ubc.ok.ovilab.roadmap.editor
                 GUI.enabled = true;
             }
             EditorGUILayout.Space();
+
+            EditorGUILayout.LabelField("Build key", config.buildKey);
 
             base.OnInspectorGUI();
             serializedObject.Update();

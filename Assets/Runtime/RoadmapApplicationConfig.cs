@@ -19,7 +19,7 @@ namespace ubc.ok.ovilab.roadmap
 
         [SerializeField] public string identifier = "Data";
         [Tooltip("Changing this key will wipe all saved data first time a new build is run")]
-        [SerializeField] public string buildKey = "00001";
+        [HideInInspector][SerializeField] public string buildKey = "00001";
         [HideInInspector][SerializeField] public string groupID = "00001";
         [HideInInspector][SerializeField] public GameObject boundingBoxWithHandlesPrefab;
         [HideInInspector][SerializeField] public bool stateChanged;
@@ -99,6 +99,7 @@ namespace ubc.ok.ovilab.roadmap
                 boundingBoxWithHandlesPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(boundingBoxWithHandlesPath);
             }
             stateChanged = true;
+            buildKey = AssetDatabase.GUIDFromAssetPath(AssetDatabase.GetAssetPath(this)).ToString();
         }
 
         /// <summary>
