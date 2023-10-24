@@ -175,6 +175,10 @@ namespace ubc.ok.ovilab.roadmap
             ProcessRequest($"/{DB_BRANCH}/{GroupID()}", HTTPMethod.GET, (branchesString) =>
             {
                 branchListCache = JsonConvert.DeserializeObject<Dictionary<string, string>>(branchesString);
+                if (branchListCache == null)
+                {
+                    branchListCache = new Dictionary<string, string>();
+                }
                 branchesListCachedTime = System.DateTime.Now.Ticks;
                 PlayerPrefs.SetString(_playerPrefsStorageKey, JsonConvert.SerializeObject(branchListCache));
                 PlayerPrefs.SetString(_playerPrefsBranchesCachedTime, branchesListCachedTime.ToString());
@@ -424,6 +428,7 @@ namespace ubc.ok.ovilab.roadmap
             if (branchListCache == null)
             {
                 UpdateBranchesList();
+                return null;
             }
             return branchListCache.Keys.ToList();
         }

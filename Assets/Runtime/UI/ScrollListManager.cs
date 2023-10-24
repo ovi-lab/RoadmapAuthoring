@@ -30,7 +30,10 @@ namespace ubc.ok.ovilab.roadmap.UI
         /// </summary>
         public void ChangeToDifferentBranch()
         {
-            SetupScrollList(RemoteDataSynchronization.Instance.GetBranches()
+            List<string> items = RemoteDataSynchronization.Instance.GetBranches();
+            if (items != null)
+            {
+                SetupScrollList(items
                             .Select(i => new ScrollListItem(i,
                                                             () =>
                                                             {
@@ -38,6 +41,12 @@ namespace ubc.ok.ovilab.roadmap.UI
                                                                 BranchDataManager.Instance.Refresh();
                                                             }))
                             .ToList());
+            }
+            else
+            {
+                // Setting up empty scroll list
+                SetupScrollList(new List<ScrollListItem>());
+            }
             menuRoot.SetActive(true);
         }
     }

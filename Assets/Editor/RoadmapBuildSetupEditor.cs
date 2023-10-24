@@ -148,7 +148,6 @@ namespace ubc.ok.ovilab.roadmap.editor
                 buildPlayerOptions.target = BuildTarget.Android;
                 buildPlayerOptions.locationPathName = buildPath;
 
-                GooglePlayServices.PlayServicesResolver.MenuForceResolve();
 
                 BuildPipeline.BuildPlayer(buildPlayerOptions);
             }
@@ -164,6 +163,7 @@ namespace ubc.ok.ovilab.roadmap.editor
             SetXRLoader(Platform.Oculus);
             ActivateScene(RoadmapSettings.instance.vrScene);
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
+            GooglePlayServices.PlayServicesResolver.MenuForceResolve();
         }
 
         private void ARSettings()
