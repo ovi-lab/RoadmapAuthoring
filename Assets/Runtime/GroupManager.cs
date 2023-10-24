@@ -12,14 +12,41 @@ namespace ubc.ok.ovilab.roadmap
     {
         [SerializeField] protected SceneGroupsData sceneGroupsData;
 
+        protected bool groupsInitialized = false;
+        protected System.Action actionAfterInitalized;
         protected Dictionary<string, PlaceablesGroup> groups;
 
         private void Start()
+        {
+            SetupGroups();
+        }
+
+        /// <summary>
+        /// Setup the groups
+        /// </summary>
+        protected void SetupGroups()
         {
             groups = new Dictionary<string, PlaceablesGroup>();
             foreach(GroupCoordinateData data in sceneGroupsData.groups)
             {
                 groups.Add(data.identifier, Init(data));
+            }
+            groupsInitialized = true;
+            actionAfterInitalized?.Invoke();
+        }
+
+        /// <summary>
+        /// Action that would have to wait to be executed after the groups are initialized.
+        /// </summary>
+        public void RunAfterInitialized(System.Action action)
+        {
+            if (groupsInitialized)
+            {
+                action.Invoke();
+            }
+            else
+            {
+                actionAfterInitalized += action;
             }
         }
 

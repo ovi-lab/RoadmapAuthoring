@@ -37,7 +37,7 @@ namespace ubc.ok.ovilab.roadmap
             // TODO: remove the dependency on build key
             if (!(PlayerPrefs.HasKey("BuildKey") && PlayerPrefs.GetString("BuildKey") == applicationConfig.buildKey))
             {
-                ClearData();
+                groupManager.RunAfterInitialized(ClearData);
             }
             if (PlayerPrefs.HasKey(_playerPrefsBranchNameKey))
             {
@@ -47,7 +47,7 @@ namespace ubc.ok.ovilab.roadmap
             {
                 BranchName = $"tempMaster_{System.DateTime.Now.Ticks}";
             }
-            LoadAll();
+            groupManager.RunAfterInitialized(LoadAll);
         }
 
         private void OnApplicationPause(bool pauseStatus)

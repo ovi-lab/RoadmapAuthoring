@@ -33,6 +33,7 @@ namespace ubc.ok.ovilab.roadmap.UI
                     item.callback.Invoke();
                     menuRoot.SetActive(false);
                 });
+                scrollItems.Add(go);
             }
         }
     }

@@ -337,6 +337,7 @@ namespace ubc.ok.ovilab.roadmap
                     yield break;
                 }
 
+                Debug.Log($"{method} request to {url} and got `{webRequest.downloadHandler.data}`");
                 if (action != null)
                 {
                     action(System.Text.Encoding.UTF8.GetString(webRequest.downloadHandler.data));

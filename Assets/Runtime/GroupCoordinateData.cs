@@ -18,5 +18,10 @@ namespace ubc.ok.ovilab.roadmap
 
         // Common for both
         public Quaternion rotation;
+
+        public override string ToString()
+        {
+            return $"{identifier} {latitude},{longitude},{altitude} - {position} - {rotation}";
+        }
     }
 }

@@ -131,7 +131,6 @@ namespace ubc.ok.ovilab.roadmap
             return false;
         }
 
-        // Unity method
         private void Start() { }
 
         // Unity method
@@ -227,11 +226,9 @@ namespace ubc.ok.ovilab.roadmap
             
             if (trackingIsValid)
             {
-                groups = new Dictionary<string, PlaceablesGroup>();
-                // Execute all actions that have been queued.
-                foreach(GroupCoordinateData data in sceneGroupsData.groups)
+                if (!groupsInitialized)
                 {
-                    groups.Add(data.identifier, Init(data));
+                    SetupGroups();
                 }
             }
         }
