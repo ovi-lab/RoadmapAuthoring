@@ -56,8 +56,8 @@ namespace ubc.ok.ovilab.roadmap
         protected virtual PlaceablesGroup Init(GroupCoordinateData data)
         {
             GameObject groupObject = new GameObject($"Group {data.identifier}");
-            transform.position = data.position;
-            transform.rotation = data.rotation;
+            groupObject.transform.position = data.position;
+            groupObject.transform.rotation = data.rotation;
 
             PlaceablesGroup placeablesGroup = groupObject.AddComponent<PlaceablesGroup>();
             placeablesGroup.Init(data.identifier);
