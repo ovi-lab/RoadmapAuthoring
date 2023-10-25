@@ -49,7 +49,7 @@ namespace ubc.ok.ovilab.roadmap
 
                     /// Also have to decide which data of the group to use.
                     /// Setting up to select based on the one with the placeable with the latest update.
-                    long dataALatestUpdate = dataAPlaceables.Select(x => x.Value.lastUpdate).Max();
+                    long dataALatestUpdate = dataAPlaceables.Count > 0 ? dataAPlaceables.Select(x => x.Value.lastUpdate).Max() : 0;
                     bool useDataA = true;
 
                     foreach (KeyValuePair<string, PlaceableObjectData> localPlaceableKVP in dataBPlaceables)

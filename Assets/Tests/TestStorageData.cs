@@ -35,5 +35,51 @@ namespace ubc.ok.ovilab.roadmap.test
             Assert.IsTrue(groupData.All(g => g.Value.PlaceableDataList[0].localPosition == Vector3.up), "All objects are as expected (localPosition=Vector3.up)");
             Assert.IsTrue(groupData.All(g => g.Value.PlaceableDataList[0].lastUpdate == 10), "All objects are as expected (lastUpdate=10)");
         }
+
+        [Test]
+        public void Test_StorageData_MergeData_BEmpty()
+        {
+            // Data for A
+            PlaceableObjectData d1 = new PlaceableObjectData("1", "1", Vector3.up, Quaternion.identity, Vector3.one, 10);
+            PlaceableObjectData d2 = new PlaceableObjectData("2", "2", Vector3.up, Quaternion.identity, Vector3.one, 10);
+
+            GroupData a1 = new GroupData("g1", new List<PlaceableObjectData>() { d1 });
+            GroupData a2 = new GroupData("g2", new List<PlaceableObjectData>() { d2 });
+
+            StorageData A = new StorageData(new List<GroupData>() { a1, a2 }, "-", "-", "-");
+            StorageData B = new StorageData(new List<GroupData>(), "-", "-", "-");
+
+            StorageData result = StorageData.MergeData(A, B, "-", "-", "-");
+
+            Dictionary<string, GroupData> groupData = result.groups.ToDictionary(g => g.identifier, g => g);
+
+            Assert.AreEqual(groupData.Count, 2, "There are 2 groups");
+            Assert.IsTrue(groupData.All(g => g.Value.PlaceableDataList.Count == 1),  "One object in each");
+            Assert.IsTrue(groupData.All(g => g.Value.PlaceableDataList[0].localPosition == Vector3.up), "All objects are as expected (localPosition=Vector3.up)");
+            Assert.IsTrue(groupData.All(g => g.Value.PlaceableDataList[0].lastUpdate == 10), "All objects are as expected (lastUpdate=10)");
+        }
+
+        [Test]
+        public void Test_StorageData_MergeData_AEmpty()
+        {
+            // Data for A
+            PlaceableObjectData d1 = new PlaceableObjectData("1", "1", Vector3.up, Quaternion.identity, Vector3.one, 10);
+            PlaceableObjectData d2 = new PlaceableObjectData("2", "2", Vector3.up, Quaternion.identity, Vector3.one, 10);
+
+            GroupData b1 = new GroupData("g1", new List<PlaceableObjectData>() { d1 });
+            GroupData b2 = new GroupData("g2", new List<PlaceableObjectData>() { d2 });
+
+            StorageData A = new StorageData(new List<GroupData>(), "-", "-", "-");
+            StorageData B = new StorageData(new List<GroupData>() { b1, b2 }, "-", "-", "-");
+
+            StorageData result = StorageData.MergeData(A, B, "-", "-", "-");
+
+            Dictionary<string, GroupData> groupData = result.groups.ToDictionary(g => g.identifier, g => g);
+
+            Assert.AreEqual(groupData.Count, 2, "There are 2 groups");
+            Assert.IsTrue(groupData.All(g => g.Value.PlaceableDataList.Count == 1),  "One object in each");
+            Assert.IsTrue(groupData.All(g => g.Value.PlaceableDataList[0].localPosition == Vector3.up), "All objects are as expected (localPosition=Vector3.up)");
+            Assert.IsTrue(groupData.All(g => g.Value.PlaceableDataList[0].lastUpdate == 10), "All objects are as expected (lastUpdate=10)");
+        }
     }
 }
