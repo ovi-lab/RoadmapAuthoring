@@ -59,6 +59,7 @@ namespace ubc.ok.ovilab.roadmap
                 child.localPosition = Vector3.zero;
                 child.localRotation = Quaternion.identity;
                 child.localScale = Vector3.one;
+                Debug.Log("Postioning group at: " + child.position.ToString("F4") + "    anchor position: " + result.Anchor.pose.position + " " + result.Anchor.pose.rotation);
             }
             else
             {

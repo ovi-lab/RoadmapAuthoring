@@ -194,9 +194,10 @@ namespace ubc.ok.ovilab.roadmap
         public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, System.Action<PlaceableObject> onClickedCallback)
         {
             Transform t = Camera.main.transform;
-            Vector3 newPosition = transform.InverseTransformPoint(t.position + t.forward.normalized * 1.5f);
+            Vector3 newPosition = t.position + t.forward.normalized * 1.5f;
             PlaceablesGroup placeablesGroup = groupManager.GetClosestGroup(newPosition);
-            return AddPlaceableObject(prefabIdentifier, identifier, placeablesGroup, onClickedCallback, newPosition, Quaternion.identity, Vector3.one);
+            Vector3 localPosition = placeablesGroup.transform.InverseTransformPoint(newPosition);
+            return AddPlaceableObject(prefabIdentifier, identifier, placeablesGroup, onClickedCallback, localPosition, Quaternion.identity, Vector3.one);
         }
 
         /// <summary>
