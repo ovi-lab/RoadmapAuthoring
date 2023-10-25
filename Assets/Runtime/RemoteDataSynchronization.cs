@@ -405,6 +405,18 @@ namespace ubc.ok.ovilab.roadmap
             }, () => { });
         }
 
+        public void MergeWithRemoteBranchWithPrompt(string branchName)
+        {
+            if (branchName != ActiveBranchName())
+            {
+                popupManager.OpenDialogWithMessage("Do you want to continue?", "Yes", () => MergeWithRemoteBranch(branchName), () => { });
+            }
+            else
+            {
+                popupManager.OpenDialogWithMessage("Selected active branch. Nothing happens", () => { });
+            }
+        }
+
         public void ChangeToRemoteBranchWithPrompt(string branchName)
         {
             if (branchName != ActiveBranchName())

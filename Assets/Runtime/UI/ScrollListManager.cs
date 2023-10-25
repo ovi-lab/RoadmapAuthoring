@@ -49,6 +49,31 @@ namespace ubc.ok.ovilab.roadmap.UI
             }
             menuRoot.SetActive(true);
         }
+
+        /// <summary>
+        /// Merge with a remote branch
+        /// </summary>
+        public void MergeWithBranch()
+        {
+            List<string> items = RemoteDataSynchronization.Instance.GetBranches();
+            if (items != null)
+            {
+                SetupScrollList(items
+                            .Select(i => new ScrollListItem(i,
+                                                            () =>
+                                                            {
+                                                                RemoteDataSynchronization.Instance.MergeWithRemoteBranchWithPrompt(i);
+                                                                BranchDataManager.Instance.Refresh();
+                                                            }))
+                            .ToList());
+            }
+            else
+            {
+                // Setting up empty scroll list
+                SetupScrollList(new List<ScrollListItem>());
+            }
+            menuRoot.SetActive(true);
+        }
     }
 
     public struct ScrollListItem

@@ -13,6 +13,8 @@ namespace ubc.ok.ovilab.roadmap.editor
         private bool askCreateBranch;
         private bool askChangebranch;
         private bool showChangebranch;
+        private bool askMergeBranch;
+        private bool showMergeBranch;
 
         void OnEnable()
         {
@@ -57,6 +59,7 @@ namespace ubc.ok.ovilab.roadmap.editor
             if (showChangebranch)
             {
                 showCreateBranch = false;
+                showMergeBranch = false;
                 EditorGUILayout.BeginHorizontal();
                 if (askChangebranch)
                 {
@@ -115,6 +118,7 @@ namespace ubc.ok.ovilab.roadmap.editor
             if (showCreateBranch)
             {
                 showChangebranch = false;
+                showMergeBranch = false;
                 EditorGUILayout.BeginHorizontal();
                 if (askCreateBranch)
                 {
@@ -154,6 +158,65 @@ namespace ubc.ok.ovilab.roadmap.editor
             else
             {
                 askCreateBranch = false;
+            }
+
+            showMergeBranch = EditorGUILayout.Foldout(showMergeBranch, "Merge Branch");
+            if (showMergeBranch)
+            {
+                showChangebranch = false;
+                showCreateBranch = false;
+                EditorGUILayout.BeginHorizontal();
+                if (askMergeBranch)
+                {
+                    EditorGUILayout.LabelField("Are you Sure?");
+                    if (GUILayout.Button($"Yes"))
+                    {
+                        askMergeBranch = false;
+                        showMergeBranch = false;
+                        if (!string.IsNullOrEmpty(branchToChange))
+                        {
+                            RemoteDataSynchronization.Instance.MergeWithRemoteBranch(branchToChange);
+                        }
+                        else
+                        {
+                            Debug.LogError($"Something went wrong, the branchName is empty");
+                        }
+                        branchToChange = "";
+                    }
+                    if (GUILayout.Button($"No"))
+                    {
+                        askMergeBranch = false;
+                        showMergeBranch = false;
+                        branchToChange = "";
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button(branchToChange))
+                    {
+                        GenericMenu menu = new GenericMenu();
+                        List<string> branches = RemoteDataSynchronization.Instance.GetBranches();
+                        if (branches != null)
+                        {
+                            foreach (var branch in branches)
+                            {
+                                menu.AddItem(new GUIContent(branch), false, BranchClicked, branch);
+                            }
+                        }
+
+                        menu.ShowAsContext();
+                    }
+
+                    if (GUILayout.Button("Merge"))
+                    {
+                        askMergeBranch = true;
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            else
+            {
+                askMergeBranch = false;
             }
 
             EditorGUILayout.Separator();
