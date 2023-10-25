@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 namespace ubc.ok.ovilab.roadmap.editor
 {
@@ -7,7 +8,11 @@ namespace ubc.ok.ovilab.roadmap.editor
     public class RemoteDataSynchronizationEditor :UnityEditor.Editor
     {
         private RemoteDataSynchronization t;
-        private string currentSelectedSpawnObject;
+        private string branchToChange;
+        private bool showCreateBranch;
+        private bool askCreateBranch;
+        private bool askChangebranch;
+        private bool showChangebranch;
 
         void OnEnable()
         {
@@ -18,11 +23,6 @@ namespace ubc.ok.ovilab.roadmap.editor
         {
             base.OnInspectorGUI();
             GUI.enabled = Application.isPlaying;
-
-            if (GUI.enabled)
-            {
-                EditorGUILayout.LabelField($"Current branch: {PlaceablesManager.Instance.BranchName}");
-            }
 
             EditorGUILayout.Separator();
 
@@ -48,6 +48,116 @@ namespace ubc.ok.ovilab.roadmap.editor
 
             EditorGUILayout.Separator();
 
+            if (GUI.enabled)
+            {
+                EditorGUILayout.LabelField($"Current branch: {PlaceablesManager.Instance.BranchName}");
+            }
+
+            showChangebranch = EditorGUILayout.Foldout(showChangebranch, "Change branch");
+            if (showChangebranch)
+            {
+                showCreateBranch = false;
+                EditorGUILayout.BeginHorizontal();
+                if (askChangebranch)
+                {
+                    EditorGUILayout.LabelField("Are you Sure?");
+                    if (GUILayout.Button($"Yes"))
+                    {
+                        askChangebranch = false;
+                        showChangebranch = false;
+                        if (!string.IsNullOrEmpty(branchToChange))
+                        {
+                            RemoteDataSynchronization.Instance.ChangeToRemoteBranch(branchToChange);
+                        }
+                        else
+                        {
+                            Debug.LogError($"Something went wrong, the branchName is empty");
+                        }
+                        branchToChange = "";
+                    }
+                    if (GUILayout.Button($"No"))
+                    {
+                        askChangebranch = false;
+                        showChangebranch = false;
+                        branchToChange = "";
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button(branchToChange))
+                    {
+                        GenericMenu menu = new GenericMenu();
+                        List<string> branches = RemoteDataSynchronization.Instance.GetBranches();
+                        if (branches != null)
+                        {
+                            foreach (var branch in branches)
+                            {
+                                menu.AddItem(new GUIContent(branch), false, BranchClicked, branch);
+                            }
+                        }
+
+                        menu.ShowAsContext();
+                    }
+
+                    if (GUILayout.Button("Change"))
+                    {
+                        askChangebranch = true;
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            else
+            {
+                askChangebranch = false;
+            }
+
+            showCreateBranch = EditorGUILayout.Foldout(showCreateBranch, "Create Branch");
+            if (showCreateBranch)
+            {
+                showChangebranch = false;
+                EditorGUILayout.BeginHorizontal();
+                if (askCreateBranch)
+                {
+                    EditorGUILayout.LabelField("Are you Sure?");
+                    if (GUILayout.Button($"Yes"))
+                    {
+                        askCreateBranch = false;
+                        showCreateBranch = false;
+                        if (!string.IsNullOrEmpty(branchToChange))
+                        {
+                            PlaceablesManager.Instance.SetBranchName(branchToChange);
+                        }
+                        else
+                        {
+                            Debug.LogError($"Something went wrong, the branchName is empty");
+                        }
+                        branchToChange = "";
+                    }
+                    if (GUILayout.Button($"No"))
+                    {
+                        askCreateBranch = false;
+                        showCreateBranch = false;
+                        branchToChange = "";
+                    }
+                }
+                else
+                {
+                    branchToChange = EditorGUILayout.TextField("Branch name", branchToChange);
+
+                    if (GUILayout.Button("Create"))
+                    {
+                        askCreateBranch = true;
+                    }
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+            else
+            {
+                askCreateBranch = false;
+            }
+
+            EditorGUILayout.Separator();
+
             if (GUILayout.Button("Delete last push"))
             {
                 t.RemoveLastRemoteStorageData();
@@ -56,9 +166,9 @@ namespace ubc.ok.ovilab.roadmap.editor
             GUI.enabled = Application.isPlaying;
         }
 
-        private void SpawnClicked(object obj)
+        private void BranchClicked(object obj)
         {
-            currentSelectedSpawnObject = (string)obj;
+            branchToChange = (string)obj;
         }
     }
 }

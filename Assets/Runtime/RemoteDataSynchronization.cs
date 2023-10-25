@@ -113,11 +113,15 @@ namespace ubc.ok.ovilab.roadmap
         /// <summary>
         /// Save the scene data to the remote.
         /// </summary>
-        private void SaveSceneData(StorageData data)
+        private void SaveSceneData(StorageData data, string branchName=null)
         {
+            if (string.IsNullOrEmpty(branchName))
+            {
+                branchName = ActiveBranchName();
+            }
             CheckSceneInScenes(() =>
             {
-                RemoteStorageData sceneData = new RemoteStorageData(System.DateTime.Now.Ticks, data, GroupID(), ActiveBranchName());
+                RemoteStorageData sceneData = new RemoteStorageData(System.DateTime.Now.Ticks, data, GroupID(), branchName);
 
                 ProcessRequest($"/{DB_SCENE_DATA}", HTTPMethod.POST, (nameString) =>
                 {
@@ -126,7 +130,7 @@ namespace ubc.ok.ovilab.roadmap
                     {
                         ProcessRequest($"/{DB_SCENES}/{SceneID()}/{DB_SCENE_DATA}/{name}", HTTPMethod.PUT, (_) =>
                         {
-                            ProcessRequest($"/{DB_BRANCH}/{GroupID()}/{ActiveBranchName()}", HTTPMethod.PUT, (_) =>
+                            ProcessRequest($"/{DB_BRANCH}/{GroupID()}/{branchName}", HTTPMethod.PUT, (_) =>
                             {
                                 LastPushedSceneDataId = name; // Set only if everything went smooth!
                                 UpdateBranchesList();
@@ -152,7 +156,7 @@ namespace ubc.ok.ovilab.roadmap
                 if (string.IsNullOrEmpty(idString))
                 {
                     StorageData data = PlaceablesManager.Instance.GetStorageData();
-                    SaveSceneData(data);
+                    SaveSceneData(data, branchName);
                     callback(new RemoteStorageData(System.DateTime.Now.Ticks, data, GroupID(), ActiveBranchName()));
                 }
                 else
@@ -234,7 +238,7 @@ namespace ubc.ok.ovilab.roadmap
                 /// localData has the current platform set as LastWrittenPlatform
                 StorageData result = StorageData.MergeData(remoteDataStorage.GetData(), localData, localData.lastWrittenPlatform, localData.buildKey, localData.branchName);
 
-                SafeLoadFromStorageData(result, localData);
+                SafeLoadFromStorageData(result, localData, saveScene:false);
             }, branchName);
         }
 
@@ -249,7 +253,6 @@ namespace ubc.ok.ovilab.roadmap
             {
                 StorageData result = remoteDataStorage.GetData();
                 SafeLoadFromStorageData(result, localData, () => PlaceablesManager.Instance.SetBranchName(branchName), false);
-
             }, branchName);
         }
 
@@ -416,8 +419,7 @@ namespace ubc.ok.ovilab.roadmap
 
         public void CreateNewBranchWithPrompt(string branchName)
         {
-            PlaceablesManager.Instance.SetBranchName(branchName);
-            popupManager.OpenDialogWithMessage("Local changes not pushed will be lost. Do you want to continue?", "Yes", () => ChangeToRemoteBranch(branchName), () => { });
+            popupManager.OpenDialogWithMessage("Do you want to continue?", "Yes", () => PlaceablesManager.Instance.SetBranchName(branchName), () => { });
         }
 
         /// <summary>
