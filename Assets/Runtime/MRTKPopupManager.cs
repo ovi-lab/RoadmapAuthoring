@@ -1,8 +1,15 @@
+// Copyright (c) UBCO OVILab
+// This code is licensed under MIT license (see LICENSE.md for details)
+
 using MixedReality.Toolkit.UX;
 using UnityEngine;
 
 namespace ubc.ok.ovilab.roadmap
 {
+    /// <summary>
+    /// <see cref="PopupManager"/> that manages an <see cref="MixedReality.Toolkit.UX.Dialog"/>.
+    /// <seealso cref="CanvasPopupManager"/>
+    /// </summary>
     [RequireComponent(typeof(DialogPool))]
     public class MRTKPopupManager :PopupManager
     {

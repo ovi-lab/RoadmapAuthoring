@@ -1,4 +1,6 @@
-using MixedReality.Toolkit.UX;
+// Copyright (c) UBCO OVILab
+// This code is licensed under MIT license (see LICENSE.md for details)
+
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -6,11 +8,19 @@ using UnityEngine.Events;
 
 namespace ubc.ok.ovilab.roadmap
 {
+    /// <summary>
+    /// <see cref="PopupManager"/> that works with canvas elements.
+    /// <seealso cref="MRTKPopupManager"/>
+    /// </summary>
     public class CanvasPopupManager :PopupManager
     {
+        [Tooltip("The root GameObject in the scene of the dialog being managed.")]
         [SerializeField] private GameObject popupDialogBase;
+        [Tooltip("TMPro text object where the message will be displayed.")]
         [SerializeField] private TextMeshProUGUI message;
+        [Tooltip("The TMPro text positive button.")]
         [SerializeField] private Button yeaButton;
+        [Tooltip("The TMPro text negtive button.")]
         [SerializeField] private Button neaButton;
 
         private TextMeshProUGUI yeaText;
@@ -41,8 +51,8 @@ namespace ubc.ok.ovilab.roadmap
         }
         #endregion
 
-
         #region Overrides
+        /// <inheritdoc />
         public override void OpenDialogWithMessage(string text, string yeaString, System.Action yeaCallback, string neaString, System.Action neaCallback, System.Action dismissCallback)
         {
             message.text = text;
@@ -84,6 +94,7 @@ namespace ubc.ok.ovilab.roadmap
             popupDialogBase.SetActive(true);
         }
 
+        /// <inheritdoc />
         public override void DismissPopup()
         {
             popupDialogBase.SetActive(false);
