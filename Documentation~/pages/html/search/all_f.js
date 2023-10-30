@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['scenegroupsdata_0',['SceneGroupsData',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_scene_groups_data.html',1,'ubc::ok::ovilab::roadmap']]],
+  ['screenitemcountf_1',['ScreenItemCountF',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_u_i_1_1_virtualized_dynamic_scroll_rect_list.html#a2ae00af3b0652f53fd21e73ede1d867e',1,'ubc::ok::ovilab::roadmap::UI::VirtualizedDynamicScrollRectList']]],
+  ['scroll_2',['Scroll',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_u_i_1_1_virtualized_dynamic_scroll_rect_list.html#af0da07fd67dfa9b1e66e5fd7c4eb5244',1,'ubc::ok::ovilab::roadmap::UI::VirtualizedDynamicScrollRectList']]],
+  ['scrolllistitem_3',['ScrollListItem',['../structubc_1_1ok_1_1ovilab_1_1roadmap_1_1_u_i_1_1_scroll_list_item.html',1,'ubc::ok::ovilab::roadmap::UI']]],
+  ['scrolllistmanager_4',['ScrollListManager',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_u_i_1_1_scroll_list_manager.html',1,'ubc::ok::ovilab::roadmap::UI']]],
+  ['setbranchname_5',['SetBranchName',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_placeables_manager.html#a15cbfa8e639d04ed568272a1eb07787d',1,'ubc::ok::ovilab::roadmap::PlaceablesManager']]],
+  ['setitemcount_6',['SetItemCount',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_u_i_1_1_virtualized_dynamic_scroll_rect_list.html#acb7022118fcd4d877872d1be7cb9622d',1,'ubc::ok::ovilab::roadmap::UI::VirtualizedDynamicScrollRectList']]],
+  ['setlocalpose_7',['SetLocalPose',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_placeable_object.html#a99c16af4611743d6a425c36733c97c11',1,'ubc.ok.ovilab.roadmap.PlaceableObject.SetLocalPose(Pose pose, Vector3 scale)'],['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_placeable_object.html#a4a95ee72b33d5a90da9931148088755d',1,'ubc.ok.ovilab.roadmap.PlaceableObject.SetLocalPose(Vector3 position, Quaternion rotation, Vector3 scale)']]],
+  ['setobjectmanipulationenabled_8',['SetObjectManipulationEnabled',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_placeable_object.html#aa52b49c866202fa98945eba7d762a3ec',1,'ubc::ok::ovilab::roadmap::PlaceableObject']]],
+  ['setokcallback_9',['SetOkCallback',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1editor_1_1_file_selection_popup.html#abf4930ca9b40811691ede2a60ff9559b',1,'ubc::ok::ovilab::roadmap::editor::FileSelectionPopup']]],
+  ['setplaceablesmodifiable_10',['SetPlaceablesModifiable',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_placeables_manager.html#af7770bbe0e9afe20b2366aecdb5815d9',1,'ubc::ok::ovilab::roadmap::PlaceablesManager']]],
+  ['setupgroups_11',['SetupGroups',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_group_manager.html#a07af4b95afaed00bc80dba58c6614048',1,'ubc::ok::ovilab::roadmap::GroupManager']]],
+  ['setupplaceableobject_12',['SetupPlaceableObject',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_placeable_object.html#af2225499bf8267e9c25eb432a2949a1c',1,'ubc::ok::ovilab::roadmap::PlaceableObject']]],
+  ['setupscrolllist_13',['SetupScrollList',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_u_i_1_1_virtualized_scroll_list.html#a2e4629d838df347eebc3f066400aab95',1,'ubc::ok::ovilab::roadmap::UI::VirtualizedScrollList']]],
+  ['showplaceableslist_14',['ShowPlaceablesList',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_u_i_1_1_scroll_list_manager.html#a3d88b959eead231261461748e4e4ebde',1,'ubc::ok::ovilab::roadmap::UI::ScrollListManager']]],
+  ['singleton_15',['Singleton',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_singleton.html',1,'ubc::ok::ovilab::roadmap']]],
+  ['singleton_3c_20branchdatamanager_20_3e_16',['Singleton&lt; BranchDataManager &gt;',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_singleton.html',1,'ubc::ok::ovilab::roadmap']]],
+  ['singleton_3c_20debugmessages_20_3e_17',['Singleton&lt; DebugMessages &gt;',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_singleton.html',1,'ubc::ok::ovilab::roadmap']]],
+  ['singleton_3c_20placeablesmanager_20_3e_18',['Singleton&lt; PlaceablesManager &gt;',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_singleton.html',1,'ubc::ok::ovilab::roadmap']]],
+  ['singleton_3c_20platformmanager_20_3e_19',['Singleton&lt; PlatformManager &gt;',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_singleton.html',1,'ubc::ok::ovilab::roadmap']]],
+  ['singleton_3c_20remotedatasynchronization_20_3e_20',['Singleton&lt; RemoteDataSynchronization &gt;',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_singleton.html',1,'ubc::ok::ovilab::roadmap']]],
+  ['spawnobject_21',['SpawnObject',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_placeables_manager.html#a3f8cdf8c3c6dca2a542ac314f72444b3',1,'ubc::ok::ovilab::roadmap::PlaceablesManager']]],
+  ['startdelete_22',['StartDelete',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_placeables_manager.html#a21904887f819c33f5e580ac19f891be4',1,'ubc::ok::ovilab::roadmap::PlaceablesManager']]],
+  ['storagedata_23',['StorageData',['../structubc_1_1ok_1_1ovilab_1_1roadmap_1_1_storage_data.html',1,'ubc::ok::ovilab::roadmap']]],
+  ['syncwithremote_24',['SyncWithRemote',['../classubc_1_1ok_1_1ovilab_1_1roadmap_1_1_remote_data_synchronization.html#a7514609db0e09615cbcf5e8bdd82975c',1,'ubc::ok::ovilab::roadmap::RemoteDataSynchronization']]]
+];
