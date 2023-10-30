@@ -1,19 +1,22 @@
-# Installation
+# Installation and Configuration of project {#setup}
 
-## Using template project
+## Installation
+
+### Using template project
 The template repository in [https://github.com/ovi-lab/RoadmapAuthoring-template](https://github.com/ovi-lab/RoadmapAuthoring-template) is pre configured with the packages and settings required to use this package.
 
-## Manual installation
+### Manual installation
 You would need the following package installed:
 - Install as a git package: https://github.com/ovi-lab/arcore-unity-extensions
 - MRTK3 (all MRTK 3 packages & the Mixed Reality OpenXR plugin) installed with the [Mixed Reality Feature Tool](https://www.microsoft.com/en-us/download/details.aspx?id=102778)
+- Then install the `RoadmapAuthoring` as a git package
 
-# Configuration of project
+## Configuration of project
 
-## Project settings
+### Project settings
  TBD
  
-## Setting Keystore
+### Setting Keystore
 - Ensure the keystore is in `UserSettings/user.keystore`. 
 - In `Player Settings` > `Player` > `Android tab` > ` Publishing Settings`
   - Ensure that `Path` under `Project Keystore` is set to the keystore path above.
@@ -32,7 +35,7 @@ Note that the passwords will not persist when you re-open the project, and would
     <div class="caption"> Roadmap build and run window</div>
 </div>
 
-## Updating the package
+### Updating the package
 You can update the pacakge to the latest version from the package manager.
 
 <div class="image">
@@ -40,5 +43,5 @@ You can update the pacakge to the latest version from the package manager.
     <div class="caption"> Pacakge manager & update</div>
 </div>
 
-## Setting group ID
+### Setting group ID
 The group ID is erquired to be configired for the application to work. It can be set in either the Roadmap build settings window or the inspector of the application config.
