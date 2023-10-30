@@ -9,6 +9,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Text;
 using System.Linq;
+using UnityEditor.SceneManagement;
+using UnityEditor.SceneTemplate;
 
 namespace ubc.ok.ovilab.roadmap.editor
 {
@@ -64,6 +66,7 @@ namespace ubc.ok.ovilab.roadmap.editor
             }
             EditorGUILayout.Space();
 
+            EnsureScenesCreated();
 
             SceneAsset arScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(RoadmapSettings.AR_Scene);
             SceneAsset vrScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(RoadmapSettings.VR_Scene);
@@ -169,6 +172,27 @@ namespace ubc.ok.ovilab.roadmap.editor
             if (GUILayout.Button("Deploy"))
             {
                 DeployAPK();
+            }
+        }
+
+        private static void EnsureScenesCreated()
+        {
+            string applicationDataPath = Path.Join(Application.dataPath, "..");
+            if (!File.Exists(Path.Join(applicationDataPath, RoadmapSettings.AR_Scene)) || !File.Exists(Path.Join(applicationDataPath, RoadmapSettings.VR_Scene)))
+            {
+                SceneSetup[] sceneSetups = EditorSceneManager.GetSceneManagerSetup();
+
+                try
+                {
+                    SceneTemplateService.Instantiate(AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(RoadmapSettings.AR_SceneTemplate), false, RoadmapSettings.AR_Scene);
+                    UnityEngine.Debug.Log($"Generated build AR scene.");
+                    SceneTemplateService.Instantiate(AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(RoadmapSettings.VR_SceneTemplate), false, RoadmapSettings.VR_Scene);
+                    UnityEngine.Debug.Log($"Generated build VR scene.");
+                }
+                catch
+                { }
+
+                EditorSceneManager.RestoreSceneManagerSetup(sceneSetups);
             }
         }
 
