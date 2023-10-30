@@ -80,3 +80,4 @@ Assets/Plugins/Android/proguard-user.txt
 .vscode/
 
 *.blend1
+/Documentation~/pages/
