@@ -29,13 +29,16 @@ Note that the passwords will not persist when you re-open the project, and would
 
 <div class="image">
     <img src="https://raw.githubusercontent.com/ovi-lab/RoadmapAuthoring/documentation/Documentation~/figures/docs/roadmap_build_settings.png" alt="Roadmap build and run window">
-    <div class="caption"> Keystore settings</div>
+    <div class="caption"> Roadmap build and run window</div>
 </div>
 
 ## Updating the package
-You can update the pacakge to the latest version from the package manager
+You can update the pacakge to the latest version from the package manager.
 
 <div class="image">
     <img src="https://raw.githubusercontent.com/ovi-lab/RoadmapAuthoring/documentation/Documentation~/figures/docs/package_manager_update.png" alt="Pacakge manager update">
-    <div class="caption"> Keystore settings</div>
+    <div class="caption"> Pacakge manager & update</div>
 </div>
+
+## Setting group ID
+The group ID is erquired to be configired for the application to work. It can be set in either the Roadmap build settings window or the inspector of the application config.
