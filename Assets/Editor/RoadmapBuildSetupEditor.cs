@@ -84,7 +84,7 @@ namespace ubc.ok.ovilab.roadmap.editor
 
             Platform prevPlatform = RoadmapSettings.instance.CurrentPlatform();
             Platform currentPlatform = (Platform) EditorGUILayout.EnumPopup("Target platform", prevPlatform);
-            if (prevPlatform != currentPlatform)
+            if (prevPlatform != currentPlatform || string.IsNullOrEmpty(buildPath))
             {
                 RoadmapSettings.instance.SetPlatformm(currentPlatform);
                 switch(currentPlatform)
@@ -115,7 +115,7 @@ namespace ubc.ok.ovilab.roadmap.editor
             }
             EditorGUILayout.Space();
 
-            EditorGUILayout.LabelField("Built APK Path:", buildPath);
+            EditorGUILayout.LabelField("Build APK Path:", buildPath);
 
             EditorGUILayout.Space();
 
@@ -161,6 +161,8 @@ namespace ubc.ok.ovilab.roadmap.editor
                         buildPlayerOptions.scenes = new[] { AssetDatabase.GetAssetPath(RoadmapSettings.instance.arScene) };
                         break;
                 }
+                GooglePlayServices.PlayServicesResolver.DeleteResolvedLibrariesSync();
+                GooglePlayServices.PlayServicesResolver.MenuForceResolve();
                 buildPlayerOptions.options = BuildOptions.None;
                 buildPlayerOptions.target = BuildTarget.Android;
                 buildPlayerOptions.locationPathName = buildPath;
@@ -201,7 +203,6 @@ namespace ubc.ok.ovilab.roadmap.editor
             SetXRLoader(Platform.Oculus);
             ActivateScene(RoadmapSettings.instance.vrScene);
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
-            GooglePlayServices.PlayServicesResolver.MenuForceResolve();
         }
 
         private void ARSettings()
