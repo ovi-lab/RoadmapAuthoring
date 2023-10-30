@@ -51,6 +51,20 @@ namespace ubc.ok.ovilab.roadmap.editor
 
         private void OnGUI()
         {
+            EditorGUILayout.LabelField($"<color=#dddddd>Group ID:    <b>{RoadmapSettings.instance.groupID}</b></color>", new GUIStyle() {richText = true});
+            if (string.IsNullOrEmpty(RoadmapSettings.instance.groupID))
+            {
+                EditorGUILayout.HelpBox("Set your Group ID", MessageType.Error);
+            }
+
+            if (GUILayout.Button(new GUIContent("Set Group ID", "Make sure all members of the team use the same ID")))
+            {
+                GroupIDPopup window = (GroupIDPopup)EditorWindow.GetWindow(typeof(GroupIDPopup));
+                window.ShowPopup();
+            }
+            EditorGUILayout.Space();
+
+
             SceneAsset arScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(RoadmapSettings.AR_Scene);
             SceneAsset vrScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(RoadmapSettings.VR_Scene);
 
