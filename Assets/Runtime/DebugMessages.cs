@@ -26,9 +26,11 @@ namespace ubc.ok.ovilab.roadmap
                 Debug.Log($"[DEBUG_MSG] {message}");
             }
 
-            string[] lines = debugText.text.Split('\n');
-
-            debugText.text = $"{message}\n" + string.Join("\n", lines.Take(maxMessages));
+            if (debugText != null)
+            {
+                string[] lines = debugText.text.Split('\n');
+                debugText.text = $"{message}\n" + string.Join("\n", lines.Take(maxMessages));
+            }
         }
 
         public void ClearDebugText()
