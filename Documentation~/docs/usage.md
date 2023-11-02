@@ -38,6 +38,10 @@ You can build and deploy the project using the roadmap build setup. Select the a
 
 Note that, the application builds the pre-configured scenes shipped with the package, not any of the scenes in the project.
 
+Under the hood, the build setup generates scenes which then built for the given platform. The `Reset generated roadmap scenes` would reset these scenes to the default values, in case something wrong had happened. 
+
+Also, there is a existing bug with the android resolver, which doesn't function correctly now and then. In case you have issues with building (e.g., build stuck on "Building Scene 0..."), you can use the `Force resolve android deps` option on the build settings which forces this. After that, you may want to consider enabling `Auto-resolution` (`Assets` > `External Dependancy Manager` > `Android Resolver` > `Settings` > `Auto-resolution`)
+
 ## Authoring scene
 
 You can author scenes on VR application (Oculus Quest), AR application (Android AR Core) and in editor. For propper synchronization, ensure the applications are built with the same application config activated. To author in editor, make a copy of the VR scene in `Assets/Scenes/VR_Scene.unity`. The template proejct already has an copy of these scene setup named `[DoNotEdit]SceneForInEditorTesting`
