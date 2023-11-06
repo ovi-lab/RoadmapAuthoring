@@ -22,6 +22,7 @@ namespace ubc.ok.ovilab.roadmap.editor
         [SerializeField] public string keystorePass;
         [SerializeField] public string keyAliasPass;
         [SerializeField] public RoadmapApplicationConfig activeConfig;
+        [SerializeField] public string installedVersion;
 
         public void SetPlatformm(Platform platform)
         {
