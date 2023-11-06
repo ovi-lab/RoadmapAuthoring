@@ -27,17 +27,26 @@ namespace ubc.ok.ovilab.roadmap.editor
 
             if (GUILayout.Button("Sync With Remote"))
             {
-                t.SyncWithRemote();
+                if (EditorUtility.DisplayDialog("Syncing branch", $"Sync branch `{PlaceablesManager.Instance.BranchName}` with remote. \nAre you Sure?", "yes", "no"))
+                {
+                    t.SyncWithRemote();
+                }
             }
 
             if (GUILayout.Button("Push"))
             {
-                t.OverwriteRemote();
+                if (EditorUtility.DisplayDialog("Pushing", $"Pushing changes of branch `{PlaceablesManager.Instance.BranchName}` to remote. \nAre you Sure?", "yes", "no"))
+                {
+                    t.OverwriteRemote();
+                }
             }
 
             if (GUILayout.Button("Pull"))
             {
-                t.OverwriteLocal();
+                if (EditorUtility.DisplayDialog("Pulling", $"Pulling changes of branch `{PlaceablesManager.Instance.BranchName}` from remote. \nAre you Sure?", "yes", "no"))
+                {
+                    t.OverwriteLocal();
+                }
             }
 
             if (GUILayout.Button("Update branches list"))
@@ -73,7 +82,16 @@ namespace ubc.ok.ovilab.roadmap.editor
                     menu.ShowAsContext();
                 }
 
-                ButtonWithCheck_branchToChange("Change", $"Changing to branch {branchToChange}",
+                string message;
+                if (t.GetBranches().Contains(PlaceablesManager.Instance.BranchName))
+                {
+                    message = $"Active branch `{PlaceablesManager.Instance.BranchName}` not seen in remote. Try updating branch list or pushing. If this branch is not in the remote, all data for this branch will be lost.";
+                }
+                else
+                {
+                    message = $"Changing to branch {branchToChange} from {PlaceablesManager.Instance.BranchName}";
+                }
+                ButtonWithCheck_branchToChange("Change", message,
                                                () => RemoteDataSynchronization.Instance.ChangeToRemoteBranch(branchToChange));
                 EditorGUILayout.EndHorizontal();
             }
@@ -139,7 +157,7 @@ namespace ubc.ok.ovilab.roadmap.editor
             {
                 if (!string.IsNullOrEmpty(branchToChange))
                 {
-                    if (EditorUtility.DisplayDialog(message, "Are you Sure?", "yes", "no"))
+                    if (EditorUtility.DisplayDialog(message, $"{message}. \nAre you Sure?", "yes", "no"))
                     {
                         callbackOnYes?.Invoke();
                     }

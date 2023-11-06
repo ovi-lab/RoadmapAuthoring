@@ -190,7 +190,7 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         /// <summary>
-        /// Safly update the lcoal storage data
+        /// Safely update the lcoal storage data
         /// </summary>
         private void SafeLoadFromStorageData(StorageData result, StorageData fallback, System.Action sucessCallback=null, bool saveScene=true)
         {
@@ -298,7 +298,7 @@ namespace ubc.ok.ovilab.roadmap
             }
             else
             {
-                popupManager.OpenDialogWithMessage($"No branch named {activeBranchName}", () => { });
+                popupManager.OpenDialogWithMessage($"No branch named {activeBranchName} in remote.", () => { });
             }
         }
 
@@ -421,7 +421,17 @@ namespace ubc.ok.ovilab.roadmap
         {
             if (branchName != ActiveBranchName())
             {
-                popupManager.OpenDialogWithMessage("Local changes not pushed will be lost. Do you want to continue?", "Yes", () => ChangeToRemoteBranch(branchName), () => { });
+                string message;
+                if (branchListCache.ContainsKey(PlaceablesManager.Instance.BranchName))
+                {
+                    message = $"Active branch `{PlaceablesManager.Instance.BranchName}` not seen in remote. Try updating branch list or pushing. If this branch is not in the remote, all data for this branch will be lost.";
+                }
+                else
+                {
+                    message = $"Changing to branch {branchName} from {PlaceablesManager.Instance.BranchName}";
+                }
+                popupManager.OpenDialogWithMessage(message, "yes",
+                                                   () => ChangeToRemoteBranch(branchName), () => { });
             }
             else
             {
