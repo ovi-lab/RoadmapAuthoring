@@ -404,6 +404,7 @@ namespace ubc.ok.ovilab.roadmap.UI
             for (int i = 0; i < poolSize; i++)
             {
                 GameObject go = Instantiate(prefab, ItemLocation(-(i + 1)), Quaternion.identity, scrollRect.content);
+                go.transform.localRotation = Quaternion.identity;
                 pool.Enqueue(go);
             }
         }
