@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.4] - 2023-11-06
+### Added
+- Editor callback when the package version changes
+  - Currently regenerates the build scenes
+
+## Fixed
+- Rotation of item in VirtualizedDynamicScrollRectList
+
+### Changed
+- RemoteDataSynchronizationEditor uses DisplayDialog.
+- Updated visual of VR scroll list buttons.
+- Updated messages and use of dialogs on all platforms.
+- Updated the Build Setup UI to show the version.
+
 ## [0.1.3] - 2023-10-30
 ### Fixed
 - Handle null in debug message
