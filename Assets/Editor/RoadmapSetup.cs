@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -70,10 +71,21 @@ namespace ubc.ok.ovilab.roadmap.editor
                     SceneTemplateService.Instantiate(AssetDatabase.LoadAssetAtPath<SceneTemplateAsset>(RoadmapSettings.VR_SceneTemplate), false, RoadmapSettings.VR_Scene);
                     UnityEngine.Debug.Log($"Generated build VR scene.");
                 }
-                catch
-                { }
+                catch (Exception e)
+                {
+                    UnityEngine.Debug.LogException(e);
+                    UnityEngine.Debug.LogError($"Error generating scenes: {e.Message}");
+                }
 
-                EditorSceneManager.RestoreSceneManagerSetup(sceneSetups);
+                try
+                {
+                    EditorSceneManager.RestoreSceneManagerSetup(sceneSetups);
+                }
+                catch (Exception e)
+                {
+                    UnityEngine.Debug.LogException(e);
+                    UnityEngine.Debug.LogError($"Error resetting scene setup: {e.Message}");
+                }
             }
         }
 
