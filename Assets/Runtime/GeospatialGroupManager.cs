@@ -1,8 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using Google.XR.ARCoreExtensions;
 using UnityEngine;
 using UnityEngine.Android;
+using UnityEngine.Events;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
@@ -16,6 +16,8 @@ namespace ubc.ok.ovilab.roadmap
         [SerializeField] private AREarthManager earthManager;
         [SerializeField] private ARAnchorManager anchorManager;
         [SerializeField] private ARCoreExtensions arCoreExtensions;
+        [Tooltip("This event gets invoked when the application is ready.")]
+        [SerializeField] private UnityEvent applicationReady;
         [Header("[ Accuracy Minimums ] - Required to start experience")]
         [SerializeField] private bool checkMinimums = false;
         [SerializeField] private float minimumHorizontalAccuracy = 10;//10
@@ -229,6 +231,7 @@ namespace ubc.ok.ovilab.roadmap
             {
                 if (!groupsInitialized)
                 {
+                    applicationReady?.Invoke();
                     SetupGroups();
                 }
             }
