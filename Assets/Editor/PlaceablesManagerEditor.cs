@@ -21,13 +21,14 @@ namespace ubc.ok.ovilab.roadmap.editor
 
             EditorGUILayout.Separator();
 
-            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Active config name:", $"{RoadmapSettings.instance.activeConfig.name} ({RoadmapSettings.instance.activeConfig.identifier})");
 
+            EditorGUILayout.BeginHorizontal();
             GUILayout.Label("Spawn object");
             if (GUILayout.Button(currentSelectedSpawnObject == null ? "Select" : $"Selected: {currentSelectedSpawnObject}"))
             {
                 GenericMenu menu = new GenericMenu();
-                foreach(var identifier in RoadmapApplicationConfig.activeApplicationConfig.PlacableIdentifierList())
+                foreach(var identifier in RoadmapSettings.instance.activeConfig.PlacableIdentifierList())
                 {
                     menu.AddItem(new GUIContent(identifier), false, SpawnClicked, identifier);
                 }
@@ -38,6 +39,10 @@ namespace ubc.ok.ovilab.roadmap.editor
             GUI.enabled = Application.isPlaying && currentSelectedSpawnObject != null;
             if (GUILayout.Button("Spawn"))
             {
+                if (RoadmapApplicationConfig.activeApplicationConfig != RoadmapSettings.instance.activeConfig)
+                {
+                    RoadmapApplicationConfig.activeApplicationConfig = RoadmapSettings.instance.activeConfig;
+                }
                 t.SpawnObject(currentSelectedSpawnObject);
             }
             GUI.enabled = Application.isPlaying;
