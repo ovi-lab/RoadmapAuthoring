@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### [0.1.6] - 2023-11-21
+### Fixed
+- Nested XR interactable conflict with ObjectManipulator on PlaceableObject 
+- Active config not being registered correctly in-editor
+
+### Changed
+- `PlaceableObject.onClickedCallback` use updated in `PlaceableManager`.
+- Appropriate methods in `PlaceableObject` made internal.
+
+### Added
+- `PlaceableObject.onPlaceableInstantiated`
+- `PlaceableObject.onClickedCallback`
+- `PlaceableObjectEventArgs` and `PlaceableObjectEvent` to use with the above events.
+
 ## [0.1.5] - 2023-11-07
 ### Added
 - Event that is called when Geospatial API is configured and setup
