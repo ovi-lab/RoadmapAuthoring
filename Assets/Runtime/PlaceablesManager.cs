@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -191,7 +192,7 @@ namespace ubc.ok.ovilab.roadmap
         /// <summary>
         /// Initilize and add a PlaceableObject to this group.
         /// </summary>
-        public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, System.Action<PlaceableObject> onClickedCallback)
+        public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, System.Action<object, PlaceableObjectEventArgs> onClickedCallback)
         {
             Transform t = Camera.main.transform;
             Vector3 newPosition = t.position + t.forward.normalized * 1.5f;
@@ -209,7 +210,7 @@ namespace ubc.ok.ovilab.roadmap
         /// `onClickedCallback` is a function that subscribes to the
         /// `PlaceableObject.onClickedCallback` event.
         /// </summary>
-        public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, PlaceablesGroup placeablesGroup, System.Action<PlaceableObject> onClickedCallback, Vector3 position, Quaternion rotation, Vector3 scale, long lastUpdate=-1)
+        public PlaceableObject AddPlaceableObject(string prefabIdentifier, string identifier, PlaceablesGroup placeablesGroup, System.Action<object, PlaceableObjectEventArgs> onClickedCallback, Vector3 position, Quaternion rotation, Vector3 scale, long lastUpdate=-1)
         {
             PlaceableObject placeableObject = PlaceableObject.SetupPlaceableObject(prefabIdentifier, identifier, placeablesGroup, lastUpdate);
             if (placeableObject ==  null)
@@ -217,7 +218,7 @@ namespace ubc.ok.ovilab.roadmap
                 return null;
             }
 
-            placeableObject.onClickedCallback += onClickedCallback;
+            placeableObject.onClickedCallback += new EventHandler<PlaceableObjectEventArgs>(onClickedCallback);
             placeableObject.SetLocalPose(position, rotation, scale);
             placeableObject.SetObjectManipulationEnabled(modifyable);
             return placeableObject;
@@ -257,9 +258,9 @@ namespace ubc.ok.ovilab.roadmap
         /// <summary>
         /// Callback for when the placeable object is clicked
         /// </summary>
-        private void OnPlaceableClicked(PlaceableObject placeableObject)
+        private void OnPlaceableClicked(object obj, PlaceableObjectEventArgs args)
         {
-            ActivePlaceableObject = placeableObject;
+            ActivePlaceableObject = args.placeableObject;
             if (deleting)
             {
                 popupManager.DismissPopup();

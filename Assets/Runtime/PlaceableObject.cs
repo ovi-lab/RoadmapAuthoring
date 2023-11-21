@@ -1,3 +1,4 @@
+using System;
 using MixedReality.Toolkit.SpatialManipulation;
 using MixedReality.Toolkit.UX;
 using UnityEngine;
@@ -13,18 +14,28 @@ namespace ubc.ok.ovilab.roadmap
     [RequireComponent(typeof(ObjectManipulator))]
     public class PlaceableObject : MonoBehaviour
     {
+        /// <summary>
+        /// Event raised when a new placeable object is created.
+        /// </summary>
+        public static EventHandler<PlaceableObjectEventArgs> onPlaceableInstantiated;
+
+        /// <summary>
+        /// Event raised when the <see cref="PlaceableObject"/> is
+        /// clicked while in modify mode.
+        /// </summary>
+        public EventHandler<PlaceableObjectEventArgs> onClickedCallback;
+
         private string prefabIdentifier;
         private string identifier;
         // TODO: Properly update lastUpdate
         private long lastUpdate;
         private PlaceablesGroup placeablesGroup;
 
-        public System.Action<PlaceableObject> onClickedCallback;
 
         /// <summary>
         /// Initialze the PlaceableObject.
         /// </summary>
-        public void Init(string prefabIdentifier, string identifier, long lastUpdate, PlaceablesGroup placeablesGroup)
+        internal void Init(string prefabIdentifier, string identifier, long lastUpdate, PlaceablesGroup placeablesGroup)
         {
             this.prefabIdentifier = prefabIdentifier;
             if (string.IsNullOrEmpty(identifier))
@@ -130,7 +141,7 @@ namespace ubc.ok.ovilab.roadmap
         /// </summary>
         public void OnClickCallback()
         {
-            onClickedCallback?.Invoke(this);
+            onClickedCallback?.Invoke(this, new PlaceableObjectEventArgs(this, PlaceableObjectEvent.Modified));
         }
 
         /// <summary>
@@ -155,7 +166,7 @@ namespace ubc.ok.ovilab.roadmap
         }
 
         #region Factory methods
-        public static HandleType handleTypeToUse = HandleType.Rotation | HandleType.Scale | HandleType.Translation;
+        private static HandleType handleTypeToUse = HandleType.Rotation | HandleType.Scale | HandleType.Translation;
 
         /// <summary>
         /// Instantiate and configure a placeable object.
@@ -165,7 +176,7 @@ namespace ubc.ok.ovilab.roadmap
         /// <param name="placeablesGroup">The PlaceablesGroup the new placeable object would belong to.</param>
         /// <param name="lastUpdate">The timestamp of when this object was last updated.</param>
         /// </summary>
-        public static PlaceableObject SetupPlaceableObject(string prefabIdentifier, string identifier, PlaceablesGroup placeablesGroup, long lastUpdate=-1)
+        internal static PlaceableObject SetupPlaceableObject(string prefabIdentifier, string identifier, PlaceablesGroup placeablesGroup, long lastUpdate=-1)
         {
             GameObject placeableGameObject = RoadmapApplicationConfig.activeApplicationConfig.GetPleaceableGameObject(prefabIdentifier, placeablesGroup.transform);
             if (placeableGameObject == null)
@@ -189,6 +200,7 @@ namespace ubc.ok.ovilab.roadmap
             }
 
             placeableObject.Init(prefabIdentifier, identifier, lastUpdate, placeablesGroup);
+            onPlaceableInstantiated?.Invoke(null, new PlaceableObjectEventArgs(placeableObject, PlaceableObjectEvent.Created));
 
             return placeableObject;
         }
@@ -255,5 +267,36 @@ namespace ubc.ok.ovilab.roadmap
             boundsControl.EnabledHandles = handleTypeToUse;
         }
         #endregion
+    }
+
+    /// <summary>
+    /// Event data associated with <see cref="PlaceableObject"/>.
+    /// </summary>
+    public class PlaceableObjectEventArgs
+    {
+        public PlaceableObject placeableObject;
+        public PlaceableObjectEvent placeableObjectEvent;
+
+        public PlaceableObjectEventArgs(PlaceableObject placeableObject, PlaceableObjectEvent placeableObjectEvent)
+        {
+            this.placeableObject = placeableObject;
+            this.placeableObjectEvent = placeableObjectEvent;
+        }
+    }
+
+    /// <summary>
+    /// Events associated with <see cref="PlaceableObject">
+    /// </summary>
+    public enum PlaceableObjectEvent
+    {
+        /// <summary>
+        /// A new <see cref="PlaceableObject"/> was created.
+        /// </summary>
+        Created,
+
+        /// <summary>
+        /// The <see cref="PlaceableObject"/> was modified
+        /// </summary>
+        Modified
     }
 }
