@@ -72,8 +72,46 @@ namespace ubc.ok.ovilab.roadmap
 
         /// <summary>
         /// Enable/disable manipulation related functions of a placeable object.
+        /// When the modification is enabled, it will disable all
+        /// other interactables associated with the object. Similarly,
+        /// when this is disabled, they will be reenabled.
         /// </summary>
-        public void SetObjectManipulationEnabled(bool enabled)
+        internal void SetObjectManipulationEnabled(bool enabled)
+        {
+            // NOTE: Any registered XR Interactables will need to be
+            // disabled before the objectmanipulator is enabled. and
+            // vice verse.
+            if (enabled)
+            {
+                SetObjectOtherManipulationEnabled(false);
+                SetObjectLocalManipulationEnabled(true);
+            }
+            else
+            {
+                SetObjectLocalManipulationEnabled(false);
+                SetObjectOtherManipulationEnabled(true);
+            }
+        }
+
+        /// <summary>
+        /// Enable/disable other manipulation related functions of a placeable object.
+        /// </summary>
+        internal void SetObjectOtherManipulationEnabled(bool enabled)
+        {
+            XRBaseInteractable[] otherInteractables = gameObject.GetComponentsInChildren<XRBaseInteractable>();
+            foreach (XRBaseInteractable interactable in otherInteractables)
+            {
+                if (interactable.transform != this.transform)
+                {
+                    interactable.enabled = enabled;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Enable/disable manipulation related functions of a placeable object.
+        /// </summary>
+        private void SetObjectLocalManipulationEnabled(bool enabled)
         {
             GetComponent<BoundsControl>().enabled = enabled;
             GetComponent<ObjectManipulator>().enabled = enabled;
