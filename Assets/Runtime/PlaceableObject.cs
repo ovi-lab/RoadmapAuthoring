@@ -1,7 +1,9 @@
 using System;
+using MixedReality.Toolkit;
 using MixedReality.Toolkit.SpatialManipulation;
 using MixedReality.Toolkit.UX;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
 
 namespace ubc.ok.ovilab.roadmap
@@ -115,6 +117,15 @@ namespace ubc.ok.ovilab.roadmap
                 if (interactable.transform != this.transform)
                 {
                     interactable.enabled = enabled;
+                }
+            }
+
+            UGUIInputAdapter[] otherUGUIAdapters = gameObject.GetComponentsInChildren<UGUIInputAdapter>();
+            foreach (UGUIInputAdapter adapter in otherUGUIAdapters)
+            {
+                if (adapter.transform != this.transform)
+                {
+                    adapter.enabled = enabled;
                 }
             }
         }
@@ -255,8 +266,6 @@ namespace ubc.ok.ovilab.roadmap
             minMaxScaleConstraint.HandType = ManipulationHandFlags.OneHanded | ManipulationHandFlags.TwoHanded;
             minMaxScaleConstraint.RelativeToInitialState = true;
 
-            boundsControlObj.AddComponent<UGUIInputAdapterDraggable>();
-
             ObjectManipulator objectManipulator = boundsControlObj.AddComponent<ObjectManipulator>();
             objectManipulator.selectMode = InteractableSelectMode.Multiple;
 
@@ -265,6 +274,10 @@ namespace ubc.ok.ovilab.roadmap
             boundsControl.BoundsCalculationMethod = BoundsCalculator.BoundsCalculationMethod.RendererOverCollider;
             boundsControl.HandlesActive = true;
             boundsControl.EnabledHandles = handleTypeToUse;
+            boundsControl.ToggleHandlesOnClick = false;
+
+            UGUIInputAdapterDraggable adapterDraggable = boundsControlObj.AddComponent<UGUIInputAdapterDraggable>();
+            adapterDraggable.MovableAxes = AxisFlags.XAxis | AxisFlags.YAxis | AxisFlags.ZAxis;
         }
         #endregion
     }
