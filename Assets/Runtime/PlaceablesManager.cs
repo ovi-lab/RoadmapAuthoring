@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -220,8 +221,17 @@ namespace ubc.ok.ovilab.roadmap
 
             placeableObject.onClickedCallback += new EventHandler<PlaceableObjectEventArgs>(onClickedCallback);
             placeableObject.SetLocalPose(position, rotation, scale);
-            placeableObject.SetObjectManipulationEnabled(modifyable);
+            StartCoroutine(DelayedUpdateObjectManipulation(placeableObject, modifyable));
             return placeableObject;
+        }
+
+        /// <summary>
+        /// To be used in as a coroutine. Set the modifiable flag at the end of the frame.
+        /// </summary>
+        private IEnumerator DelayedUpdateObjectManipulation(PlaceableObject placeableObject, bool modifyable)
+        {
+            yield return null;
+            placeableObject.SetObjectManipulationEnabled(modifyable);
         }
         #endregion
 
