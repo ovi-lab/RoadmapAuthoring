@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.7] - 2023-11-22
+### Fixed
+- Fix for nested `UGUIInputAdapter`s masking one another (see https://github.com/MixedRealityToolkit/MixedRealityToolkit-Unity/issues/561 for more info)
+- Fix issue with new PlaceableObject needing to go in and out of modify state to be modifiable as soon as spawned.
+  - Updating the modify flag at the end of the frame.
+
 ### [0.1.6] - 2023-11-21
 ### Fixed
 - Nested XR interactable conflict with ObjectManipulator on PlaceableObject 
