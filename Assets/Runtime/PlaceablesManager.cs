@@ -135,6 +135,20 @@ namespace ubc.ok.ovilab.roadmap
             StorageData storageData = JsonUtility.FromJson<StorageData>(PlayerPrefs.GetString(_playerPrefsStorageKey));
 
             LoadFromStorageData(storageData);
+
+            StartCoroutine(LoadAllDelayedCallback());
+        }
+
+        /// <summary>
+        /// Callback that runs at the end of the frame.
+        /// </summary>
+        private IEnumerator LoadAllDelayedCallback()
+        {
+            yield return null;
+            // NOTE: This is done to have any interactables that were
+            // previously registered get propperly handled!
+            SetPlaceablesModifiable(!modifyable);
+            SetPlaceablesModifiable(!modifyable);
         }
 
         /// <summary>
