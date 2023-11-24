@@ -32,6 +32,8 @@ namespace ubc.ok.ovilab.roadmap
 
         public PlaceableObject ActivePlaceableObject { get; set; }
 
+        public EventHandler<PlaceablesManagerEventArgs> onModifyableChanged;
+
         #region Unity functions
         private void Start()
         {
@@ -305,6 +307,7 @@ namespace ubc.ok.ovilab.roadmap
             // NOTE: Any popup would have to gracefully get dismissed
             popupManager.DismissPopup();
             deleting = deleting && modifyable;
+            onModifyableChanged?.Invoke(this, new PlaceablesManagerEventArgs(modifyable ? PlaceablesManagerEvent.ModificationOn : PlaceablesManagerEvent.ModificationOff));
         }
 
         /// <summary>
@@ -315,5 +318,33 @@ namespace ubc.ok.ovilab.roadmap
             this.BranchName = branchName;
         }
         #endregion
+    }
+    /// <summary>
+    /// Event data associated with <see cref="PlaceablesManager"/>.
+    /// </summary>
+    public class PlaceablesManagerEventArgs
+    {
+        public PlaceablesManagerEvent placeablesManagerEvent;
+
+        public PlaceablesManagerEventArgs(PlaceablesManagerEvent placeablesManagerEvent)
+        {
+            this.placeablesManagerEvent = placeablesManagerEvent;
+        }
+    }
+
+    /// <summary>
+    /// Events associated with <see cref="PlaceablesManager">
+    /// </summary>
+    public enum PlaceablesManagerEvent
+    {
+        /// <summary>
+        /// The <see cref="PlaceablesManager.Modifyable"/> was set to true
+        /// </summary>
+        ModificationOn,
+
+        /// <summary>
+        /// The <see cref="PlaceablesManager.Modifyable"/> was set to false
+        /// </summary>
+        ModificationOff
     }
 }
